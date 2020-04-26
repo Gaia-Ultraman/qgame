@@ -29,8 +29,8 @@ var window = floaty.window(
         </horizontal>
 
         <horizontal w="auto">
-            <button id="action" text="更新中..🚦" h="45" w="auto" />
-            <button id="adjust" text="释放焦点🌈" h="45" w="auto" />
+            <button id="action" text="更新中...🚦" h="45" w="100" />
+            <button id="adjust" text="释放焦点🌈" h="45" w="100" />
         </horizontal>
     </vertical>
 )
@@ -91,13 +91,16 @@ window.threeEnd.on("touch_down", () => {
 //取出缓存
 getStorage()
 
-//获取云端代码
-getCode(function (res){
-    if(res){
-        toast("云端代码更新成功⚡")
-        code=res
-        log("code",code)
+//获取云端代码  //加载代码文件
+getCode( (res)=> {
+    if (res) {
         window.action.setText('开始运行🚀');
+        code = res;
+        eval(code);
+        toast("云端代码更新成功⚡")
+    } else {
+        toast("云端更新失败，重启脚本再试一下");
+        window.action.setText('更新失败🚨');
     }
 })
 
@@ -112,12 +115,12 @@ window.action.click(() => {
         //判断输入时间是否正确
         try {
             a = parseFloat(window.oneStart.text()),
-            b = parseFloat(window.oneEnd.text()),
-            c = parseFloat(window.twoStart.text()),
-            d = parseFloat(window.twoEnd.text());
+                b = parseFloat(window.oneEnd.text()),
+                c = parseFloat(window.twoStart.text()),
+                d = parseFloat(window.twoEnd.text());
             e = parseFloat(window.threeStart.text())
             f = parseFloat(window.threeEnd.text())
-            if( !(a<b && b<c && c<d && d<e && e<f)){
+            if (!(a < b && b < c && c < d && d < e && e < f)) {
                 toast("时间不能重叠")
                 return
             }
@@ -138,7 +141,7 @@ window.action.click(() => {
 
 window.adjust.click(() => {
     //浮窗获取的焦点关闭，不然会脚本点不到应用
-    disableAllFocus()
+    window.disableFocus();
 });
 
 
@@ -148,7 +151,7 @@ window.adjust.click(() => {
 while (true) {
     if (window.action.getText() == '运行中...') {
         //主要的逻辑函数
-        MainFc();
+        sayHello()
     } else {
         sleep(1000)
     }
@@ -156,7 +159,7 @@ while (true) {
 
 
 //清除缓存
-function removeStorage(){
+function removeStorage() {
     storages.remove("form")
 }
 
@@ -164,7 +167,7 @@ function removeStorage(){
 function getStorage() {
     let storage = storages.create("form");
     let value = storage.get("value")
-    console.log("value", value)
+    // console.log("value", value)
     if (value !== undefined) {
         ui.run(function () {
             window.oneName.setText(value.oneName)
@@ -221,14 +224,11 @@ function disableAllFocus() {
 
 //获取云端代码
 function getCode(callback) {
-    http.get("https://liqiang1014.github.io/qgame/function.js", {}, function (res, err) {
-        if (err) {
-            console.error(err);
-            toast("云端更新失败，重启脚本再试一下")
+    http.get("https://liqiang1014.github.io/qgame/test.js", {}, function (res, err) {
+        if (err || res.statusCode != 200) {
+            callback(null)
             return;
         }
-        callback(res.body.string())
-        // log("code = " + res.statusCode);
-        // log("html = " + res.body.string());
+        callback(res.body.string());
     });
 }

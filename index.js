@@ -1,6 +1,6 @@
 auto.waitFor()
 var a, b, c, d, e, f;//三位主播的时间
-var cloudFunction=()=>{};//云端拉取的主函数载体
+var cloudFunction = () => { };//云端拉取的主函数载体
 var window = floaty.window(
     <vertical bg="#F8F8FF" padding="10" w="auto" gravity="center" >
         <text text="🌼企鹅电竞助手-云更新版🌼" textSize="15sp" w="auto" />
@@ -92,11 +92,13 @@ window.threeEnd.on("touch_down", () => {
 getStorage()
 
 //获取云端代码  //加载代码文件
-getCode( (res)=> {
+getCode((res) => {
     if (res) {
         window.action.setText('开始运行🚀');
         code = res;
-        cloudFunction=Function(code);
+        //发布的时候使用这个
+        // cloudFunction = Function(code)();
+        cloudFunction = Function('return function(a,b,c,d,e,f){console.log("时间:",a,b,c,d,e,f)}')();
         toast("云端代码更新成功⚡")
     } else {
         toast("云端更新失败，重启脚本再试一下");
@@ -115,9 +117,9 @@ window.action.click(() => {
         //判断输入时间是否正确
         try {
             a = parseFloat(window.oneStart.text()),
-                b = parseFloat(window.oneEnd.text()),
-                c = parseFloat(window.twoStart.text()),
-                d = parseFloat(window.twoEnd.text());
+            b = parseFloat(window.oneEnd.text()),
+            c = parseFloat(window.twoStart.text()),
+            d = parseFloat(window.twoEnd.text());
             e = parseFloat(window.threeStart.text())
             f = parseFloat(window.threeEnd.text())
             if (!(a < b && b < c && c < d && d < e && e < f)) {
@@ -134,7 +136,7 @@ window.action.click(() => {
         //设置缓存
         setStorage()
         //设置之后就运行了
-        window.action.setText('运行中...');
+        window.action.setText('运行中..⚡');
 
     }
 });
@@ -149,9 +151,9 @@ window.adjust.click(() => {
 
 //相当于堵塞直到点击了运行，因为sleep不能再UI线程执行
 while (true) {
-    if (window.action.getText() == '运行中...') {
+    if (window.action.getText() == '运行中..⚡') {
         //主要的逻辑函数
-        cloudFunction()
+        cloudFunction(a,b,c,d,e,f)
     } else {
         sleep(1000)
     }

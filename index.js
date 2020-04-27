@@ -1,6 +1,6 @@
 auto.waitFor()
-var a, b, c, d, e, f,//三位主播的时间
-    code;//云端拉取的代码
+var a, b, c, d, e, f;//三位主播的时间
+var cloudFunction=()=>{};//云端拉取的主函数载体
 var window = floaty.window(
     <vertical bg="#F8F8FF" padding="10" w="auto" gravity="center" >
         <text text="🌼企鹅电竞助手-云更新版🌼" textSize="15sp" w="auto" />
@@ -96,7 +96,7 @@ getCode( (res)=> {
     if (res) {
         window.action.setText('开始运行🚀');
         code = res;
-        eval(code);
+        cloudFunction=Function(code);
         toast("云端代码更新成功⚡")
     } else {
         toast("云端更新失败，重启脚本再试一下");
@@ -151,7 +151,7 @@ window.adjust.click(() => {
 while (true) {
     if (window.action.getText() == '运行中...') {
         //主要的逻辑函数
-        sayHello()
+        cloudFunction()
     } else {
         sleep(1000)
     }

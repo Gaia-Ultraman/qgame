@@ -1,4 +1,1 @@
-log("6666")
-function sayHello(){
-    log("hello")
-}
+log("6666",this,this.arguments)

@@ -226,7 +226,7 @@ function disableAllFocus() {
 
 //获取云端代码
 function getCode(callback) {
-    http.get("https://liqiang1014.github.io/qgame/test.js", {}, function (res, err) {
+    http.get("https://liqiang1014.github.io/qgame/main.js", {}, function (res, err) {
         if (err || res.statusCode != 200) {
             callback(null)
             return;

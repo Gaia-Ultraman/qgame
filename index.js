@@ -1,4 +1,5 @@
 auto.waitFor()
+auto.setMode("fast")
 var a, b, c, d, e, f;//三位主播的时间
 var cloudFunction = () => { };//云端拉取的主函数载体
 var window = floaty.window(
@@ -29,8 +30,8 @@ var window = floaty.window(
         </horizontal>
 
         <horizontal w="auto">
-            <button id="action" text="更新中...🚦" h="45" w="100" />
-            <button id="adjust" text="释放焦点🌈" h="45" w="100" />
+            <button id="action" textSize="15sp" text="更新中..🚦" h="45" w="110" />
+            <button id="adjust" textSize="15sp" text="释放焦点🌈" h="45" w="110" />
         </horizontal>
     </vertical>
 )
@@ -39,7 +40,6 @@ window.setPosition(150, 230)
 //绑定方法延迟一下，不然绑不上
 sleep(100)
 //六个打开数字键盘的input
-//1
 window.oneName.on("touch_down", function () {
     // window.oneStart.setFocusable(true)
     window.requestFocus();
@@ -92,19 +92,19 @@ window.threeEnd.on("touch_down", () => {
 getStorage()
 
 //获取云端代码  //加载代码文件
-getCode((res) => {
+getCode((res)=> {
+    // log("CB",res,typeof res)
     if (res) {
-        window.action.setText('开始运行🚀');
-        code = res;
-        log(code)
         //发布的时候使用这个
-        cloudFunction = Function(code)();
+        cloudFunction = Function(res)();
         // cloudFunction = Function('return function(arr){console.log("参数:",arr)}')();
         toast("云端代码更新成功⚡")
+        window.action.setText('开始运行🚀');
     } else {
         toast("云端更新失败，重启脚本再试一下");
         window.action.setText('更新失败🚨');
     }
+    
 })
 
 
@@ -154,7 +154,6 @@ window.adjust.click(() => {
 while (true) {
     if (window.action.getText() == '运行中..⚡') {
         //主要的逻辑函数
-        // cloudFunction(a,b,c,d,e,f)
         cloudFunction([{
             name:window.oneName.text(),
             start:a,

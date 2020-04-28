@@ -1,4 +1,4 @@
-var words=[
+var words = [
     '主播6666!',
     '主播加油,我相信你是最棒的!',
     '玩的不错呀!',
@@ -41,21 +41,21 @@ var words=[
 ]
 
 //获取随机弹幕的语句
-function getRandomBulletScreen(){
-    return words[Math.floor(Math.random()*words.length)]
+function getRandomBulletScreen() {
+    return words[Math.floor(Math.random() * words.length)]
 }
 
-function sendBulletScreen(){
-    if(setText(0,getRandomBulletScreen())){
-        if(id("send").findOnce()){
+function sendBulletScreen() {
+    if (setText(0, getRandomBulletScreen())) {
+        if (id("send").findOnce()) {
             id("send").findOnce().click()
-        }else{
+        } else {
             click('发送')
         }
     }
     //15分钟内随机
     // setTimeout(sendBulletScreen,Math.floor(Math.random()*1000*900))
-    setTimeout(sendBulletScreen,Math.floor(Math.random()*1000*10))
+    setTimeout(sendBulletScreen, Math.floor(Math.random() * 1000 * 10))
 }
 
 // sendBulletScreen()
@@ -133,4 +133,40 @@ function GetTask() {
 
 }
 
-GetTask()
+// GetTask()
+
+//退出APP
+function ExitApp() {
+    //强制停止
+    var result = shell("am force-stop com.tencent.qgame", true);
+    log("result",result.code);
+    toast("???")
+    if (result.code != 0) {
+        
+        //备用退出
+        back()
+        sleep(300)
+        back()
+        sleep(300)
+        back()
+        sleep(300)
+        back()
+        sleep(300)
+    }
+
+
+    // back()
+    // sleep(300)
+    // back()
+    // sleep(300)
+    // back()
+    // sleep(300)
+    // back()
+    // sleep(300)
+    // back()
+    // sleep(300)
+    // Power()
+    // sleep(500)
+}
+
+ExitApp()

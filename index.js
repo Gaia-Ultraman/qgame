@@ -35,7 +35,7 @@ var window = floaty.window(
     </vertical>
 )
 window.requestFocus();
-window.setPosition(150, 530)
+window.setPosition(150, 230)
 //绑定方法延迟一下，不然绑不上
 sleep(100)
 //六个打开数字键盘的input
@@ -96,9 +96,10 @@ getCode((res) => {
     if (res) {
         window.action.setText('开始运行🚀');
         code = res;
+        log(code)
         //发布的时候使用这个
-        // cloudFunction = Function(code)();
-        cloudFunction = Function('return function(a,b,c,d,e,f){console.log("时间:",a,b,c,d,e,f)}')();
+        cloudFunction = Function(code)();
+        // cloudFunction = Function('return function(arr){console.log("参数:",arr)}')();
         toast("云端代码更新成功⚡")
     } else {
         toast("云端更新失败，重启脚本再试一下");
@@ -153,7 +154,20 @@ window.adjust.click(() => {
 while (true) {
     if (window.action.getText() == '运行中..⚡') {
         //主要的逻辑函数
-        cloudFunction(a,b,c,d,e,f)
+        // cloudFunction(a,b,c,d,e,f)
+        cloudFunction([{
+            name:window.oneName.text(),
+            start:a,
+            end:b,
+        },{
+            name:window.twoName.text(),
+            start:c,
+            end:d,
+        },{
+            name:window.threeName.text(),
+            start:e,
+            end:f,
+        }])
     } else {
         sleep(1000)
     }
@@ -162,13 +176,13 @@ while (true) {
 
 //清除缓存
 function removeStorage() {
-    storages.remove("form")
+    storages.remove("v1")
 }
 
 //取出缓存
 function getStorage() {
     let storage = storages.create("form");
-    let value = storage.get("value")
+    let value = storage.get("v1")
     // console.log("value", value)
     if (value !== undefined) {
         ui.run(function () {
@@ -190,7 +204,7 @@ function getStorage() {
 //设置缓存
 function setStorage() {
     var storage = storages.create("form");
-    storage.put("value", {
+    storage.put("v1", {
         oneName: window.oneName.text(),
         oneStart: window.oneStart.text(),
         oneEnd: window.oneEnd.text(),

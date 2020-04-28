@@ -44,7 +44,7 @@ var words=[
 function getRandomBulletScreen(){
     return words[Math.floor(Math.random()*words.length)]
 }
-auto("fast");
+
 function sendBulletScreen(){
     if(setText(0,getRandomBulletScreen())){
         if(id("send").findOnce()){
@@ -54,7 +54,8 @@ function sendBulletScreen(){
         }
     }
     //15分钟内随机
-    setTimeout(sendBulletScreen,Math.floor(Math.random()*1000*900))
+    // setTimeout(sendBulletScreen,Math.floor(Math.random()*1000*900))
+    setTimeout(sendBulletScreen,Math.floor(Math.random()*1000*10))
 }
 
 // sendBulletScreen()
@@ -132,4 +133,4 @@ function GetTask() {
 
 }
 
-// GetTask()
+GetTask()

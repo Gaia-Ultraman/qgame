@@ -1,7 +1,7 @@
 //时间配置
-let config={
-    bulletTime:1800, //30分钟
-    getTaskTime:900 //15分钟
+let config = {
+    bulletTime: 1800, //30分钟
+    getTaskTime: 900 //15分钟
 }
 //企鹅电竞的状态 close关闭 open开启  inRoom在房间  getTask在房间领取任务  getHB在房间领取红包
 let appStatus = "close"
@@ -127,7 +127,7 @@ function ChoosePerson(name) {
             OpenToRoom(name)
             break
         }
-        let zb=depth(25).desc(name).findOne(4000)
+        let zb = depth(25).desc(name).findOne(4000)
         console.log("主播", name, zb)
         if (zb) {
             zb.parent() && zb.parent().click()
@@ -152,9 +152,9 @@ function ChoosePerson(name) {
 
 //进去第一步，找口令红包
 function FindHB() {
-    log("找口令红包",appStatus)
+    log("找口令红包", appStatus)
     if (appStatus != "inRoom") return
-    appStatus="getHB"
+    appStatus = "getHB"
     sleep(30000)
     //打开所有
     var openAll;
@@ -164,19 +164,19 @@ function FindHB() {
         if (list && list.size() > 2) {
             openAll = list.get(list.size() - 1)
         }
-    }else{
-        appStatus="inRoom"
+    } else {
+        appStatus = "inRoom"
         return
     }
-    log("找口令红包openAll",openAll)
+    log("找口令红包openAll", openAll)
     openAll.click()
     toast("查看是否有口令红包")
     //打开抽奖
-    if(className("android.view.View").desc("抽奖").findOne(30000)){
+    if (className("android.view.View").desc("抽奖").findOne(30000)) {
         className("android.view.View").desc("抽奖").findOnce().parent().click()
-    }else{
+    } else {
         back()
-        appStatus="inRoom"
+        appStatus = "inRoom"
         return
     }
     //判断是否为口令红包
@@ -199,7 +199,7 @@ function FindHB() {
         sleep(4000)
         back()
     }
-    appStatus="inRoom"
+    appStatus = "inRoom"
 }
 
 
@@ -222,7 +222,7 @@ function RefreshSP() {
 
 
 //房间内弹出的奇怪窗口
-function closeWindow(){
+function closeWindow() {
     if (appStatus != "inRoom") return
     //升级的弹窗
     id("com.tencent.qgame:id/iv_close").findOnce() && id("com.tencent.qgame:id/iv_close").findOnce().click()
@@ -233,85 +233,85 @@ function closeWindow(){
 
 //领取任务奖励
 function GetTask() {
-        log("领取任务奖励!")
-        if (appStatus != "inRoom") return
-        appStatus='getTask'
-        //打开所有
-        log("打开所有")
-        var openAll;
-        if(id("com.tencent.qgame:id/playing_entrance_container").findOne(10000)){
-            var list = id("com.tencent.qgame:id/playing_entrance_container").findOnce().children();
-            if (list.size() > 2) {
-                openAll = list.get(list.size() - 1)
-            } else {
-                appStatus = "inRoom"
-                return
-            }
-        }else{
+    log("领取任务奖励!")
+    if (appStatus != "inRoom") return
+    appStatus = 'getTask'
+    //打开所有
+    log("打开所有")
+    var openAll;
+    if (id("com.tencent.qgame:id/playing_entrance_container").findOne(10000)) {
+        var list = id("com.tencent.qgame:id/playing_entrance_container").findOnce().children();
+        if (list.size() > 2) {
+            openAll = list.get(list.size() - 1)
+        } else {
             appStatus = "inRoom"
             return
         }
+    } else {
+        appStatus = "inRoom"
+        return
+    }
 
-        toast("查看是否有可领取任务")
-        //打开所有
-        openAll.click()
-        //打开任务
-        if(className("android.view.View").desc("任务").findOne(30000)){
-            className("android.view.View").desc("任务").findOnce().parent() &&className("android.view.View").desc("任务").findOnce().parent().click()
-        }else{
-            back()
-            appStatus = "inRoom"
+    toast("查看是否有可领取任务")
+    //打开所有
+    openAll.click()
+    //打开任务
+    if (className("android.view.View").desc("任务").findOne(30000)) {
+        className("android.view.View").desc("任务").findOnce().parent() && className("android.view.View").desc("任务").findOnce().parent().click()
+    } else {
+        back()
+        appStatus = "inRoom"
+        return
+    }
+
+
+
+    //点开任务
+    renWu("新手任务")
+    renWu("日常任务")
+    renWu("直播间任务")
+    renWu("活动任务")
+    renWu("守护任务")
+    //领取礼盒
+    className("ImageView").depth(13).find().forEach(element => {
+        element.parent().click()
+        sleep(300)
+    })
+    sleep(3000)
+    back()
+    sleep(3000)
+    back()
+
+    //领取完成之后设置状态
+    appStatus = "inRoom"
+
+    function renWu(name) {
+        var rw = className("android.view.View").desc(name).findOne(30000)
+        if (!rw) {
+            toast("未找到" + name)
             return
         }
-        
-
-
-        //点开任务
-        renWu("新手任务")
-        renWu("日常任务")
-        renWu("直播间任务")
-        renWu("活动任务")
-        renWu("守护任务")
-        //领取礼盒
-        className("ImageView").depth(13).find().forEach(element => {
-            element.parent().click()
-            sleep(300)
+        toast(name)
+        rw.parent().click()
+        //等待任务列表加载出来
+        sleep(5000)
+        //若果有展开栏
+        log(className("android.widget.ImageView").depth(19).find().empty())
+        className("android.widget.ImageView").depth(19).find().forEach(element => {
+            log("有展开栏")
+            element.parent() && element.parent().click()
+            sleep(1500)
         })
         sleep(3000)
-        back()
-        sleep(3000)
-        back()
+        //领取任务奖励
+        log("领取按钮", desc("领取").find().empty())
+        desc("领取").find().forEach(element => {
+            log("领取按钮", element)
+            element.parent() && element.parent().click()
+            sleep(1500)
+        });
+    }
 
-        //领取完成之后设置状态
-        appStatus = "inRoom"
-
-        function renWu(name) {
-            var rw = className("android.view.View").desc(name).findOne(30000)
-            if (!rw) {
-                toast("未找到" + name)
-                return
-            }
-            toast(name)
-            rw.parent().click()
-            //等待任务列表加载出来
-            sleep(5000)
-            //若果有展开栏
-            log(className("android.widget.ImageView").depth(19).find().empty())
-            className("android.widget.ImageView").depth(19).find().forEach(element => {
-                log("有展开栏")
-                element.parent() && element.parent().click() 
-                sleep(1500)
-            })
-            sleep(3000)
-            //领取任务奖励
-            log("领取按钮",desc("领取").find().empty())
-            desc("领取").find().forEach(element => {
-                log("领取按钮",element)
-                element.parent() && element.parent().click()
-                    sleep(1500)
-               });
-        }
-    
 
 }
 
@@ -352,6 +352,8 @@ function ExitApp() {
 
 
 return function (arr) {
+    //完成状态
+    let hasDone = false;
     let now = new Date();
     //当前时间的的在本天中的秒数
     let tdSecond = now.getHours() * 3600 + now.getMinutes() * 60 + now.getSeconds();
@@ -364,16 +366,13 @@ return function (arr) {
     arr.forEach((v, i) => {
         v.start = v.start * 3600;
         v.end = v.end * 3600;
-        v.timers = [];
-        log(i,v.start,v.end,tdSecond)
+        v.thread = [];
+        log(i, v.start, v.end, tdSecond)
         if (v.end > tdSecond) {
-            log(i)
-            log(v.start > tdSecond ? (v.start - tdSecond) * 1000 : 0)
-            log(v.end - tdSecond)
-            v.timers[0] = setTimeout(() => {
-                log("定时器进入")
-                v.thread = threads.start(function () {
-                    log("线程进入")
+            v.thread[0] = threads.start(function () {
+                log("线程进入")
+                setTimeout(() => {
+                    log("定时器进入")
                     OpenToRoom(v.name)
                     FindHB()
                     setInterval(() => {
@@ -386,15 +385,25 @@ return function (arr) {
                         GetTask()
                     }, config.getTaskTime * 1000)
                     sendBulletScreen()
-                });
-            }, v.start > tdSecond ? (v.start - tdSecond) * 1000 : 0)
+                }, v.start > tdSecond ? (v.start - tdSecond) * 1000 : 0)
+            });
 
-            //到点了关闭
-            v.timers[1] = setTimeout(() => {
-                v.timers.forEach(v => clearTimeout(v));
-                v.thread && v.thread.interrupt();
-                ExitApp()
-            }, (v.end - tdSecond) * 1000)
+            v.thread[1] = threads.start(function () {
+                //到点了关闭
+                setTimeout(() => {
+                    v.thread.forEach(v=>v.interrupt());
+                    ExitApp()
+                    hasDone = i == 2
+                }, (v.end - tdSecond) * 1000)
+            })
+
         }
     })
+    while (true) {
+        if (hasDone) {
+            break
+        } else {
+            sleep(1000)
+        }
+    }
 }

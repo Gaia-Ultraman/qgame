@@ -95,7 +95,7 @@ getStorage()
 
 //获取云端代码  //加载代码文件
 getCode((res) => {
-    // log("CB",res,typeof res)
+    log("CB",res,typeof res)
     if (res) {
         //发布的时候使用这个
         cloudFunction = Function(res)();

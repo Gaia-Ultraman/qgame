@@ -38,6 +38,26 @@ var words = [
     '[玫瑰][玫瑰][玫瑰][玫瑰][玫瑰][玫瑰][玫瑰][玫瑰][玫瑰][示爱][示爱][示爱] 腻害哦！',
     '[拳头][拳头][拳头][拳头][拳头][拳头]加油！(๑•̀ㅂ•́)و✧',
     '我相信你，你一定是最棒的',
+    '这波怎么说？',
+    '可以可以不错不错',
+    '冲鸭不要怂',
+    '打他啊打他',
+    '别送就行',
+    '你说看看这波',
+    '收他收他',
+    '我认为不能这样打',
+    '哎 亏了啊',
+    '不亏不亏',
+    '可以打的真的',
+    '你要相信你自己',
+    '这个不能要的',
+    '回回回快回',
+    '嗯 可以这样',
+    '兄弟呀不行呀',
+    '来 大佬加油',
+    '丫的别怕',
+    '哈哈哈哈对对对',
+    '是这样的吗？',
 ]
 
 //获取随机弹幕的语句
@@ -54,7 +74,7 @@ function sendBulletScreen() {
         }
     }
     //15分钟内随机
-    // setTimeout(sendBulletScreen,Math.floor(Math.random()*1000*900))
+    // setTimeout(sendBulletScreen,Math.floor(Math.random()*1000*1800))
     setTimeout(sendBulletScreen, Math.floor(Math.random() * 1000 * 10))
 }
 
@@ -139,10 +159,7 @@ function GetTask() {
 function ExitApp() {
     //强制停止
     var result = shell("am force-stop com.tencent.qgame", true);
-    log("result",result.code);
-    toast("???")
     if (result.code != 0) {
-        
         //备用退出
         back()
         sleep(300)
@@ -153,20 +170,62 @@ function ExitApp() {
         back()
         sleep(300)
     }
-
-
-    // back()
-    // sleep(300)
-    // back()
-    // sleep(300)
-    // back()
-    // sleep(300)
-    // back()
-    // sleep(300)
-    // back()
-    // sleep(300)
-    // Power()
-    // sleep(500)
 }
 
-ExitApp()
+
+// ExitApp()
+
+function main(arr){
+    //应用所在状态  APP为关闭close   APP在打开
+    let appStatus="close"
+    //所有任务完成得状态位，在最后一位主播结束后被改变，执行第二天循环
+    let hasDone=false;
+    let now = new Date();
+    //当前时间的的在本天中的秒数
+    let tdSecond = now.getHours() * 3600 + now.getMinutes() * 60 + now.getSeconds();
+    //把传入的小时时间全部转换为秒数
+    arr.forEach(v=>{
+        v.start=v.start*3600;
+        v.end=v.end*3600;
+    })
+    //如果目前的秒数加一天秒数的都比结束的秒数小，这种情况一般是凌晨启动脚本，然后在凌晨还在直播
+    if((tdSecond+24*3600)<arr[3].end*3600){
+        tdSecond+=24*3600
+    }
+
+    //设置第一个主播任务
+    if(arr[0].end>tdSecond){
+        //进入直播间
+        setTimeout(()=>{
+            threads.start(function(){
+                 //TODO
+            });
+        },arr[0].start>tdSecond?(arr[0].start-tdSecond)*1000:0)
+
+        //到点了关闭
+        setTimeout(()=>{
+            //TODO
+        },(arr[0].end-tdSecond)*1000)
+    }
+
+    //
+
+}
+
+
+
+
+
+main([{
+    name:'MR.滴落',
+    start:16,
+    end:17,
+},{
+    name:'MR.滴落',
+    start:17.01,
+    end:19,
+},{
+    name:'MR.滴落',
+    start:19.01,
+    end:26,
+}])

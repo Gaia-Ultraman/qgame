@@ -1,5 +1,8 @@
+//相关配置
 auto.waitFor()
-auto.setMode("fast")
+auto.setMode("fast");
+setScreenMetrics(1080, 1920);
+
 var a, b, c, d, e, f;//三位主播的时间
 var cloudFunction = () => { };//云端拉取的主函数载体
 var window = floaty.window(
@@ -92,7 +95,7 @@ window.threeEnd.on("touch_down", () => {
 getStorage()
 
 //获取云端代码  //加载代码文件
-getCode((res)=> {
+getCode((res) => {
     // log("CB",res,typeof res)
     if (res) {
         //发布的时候使用这个
@@ -104,7 +107,7 @@ getCode((res)=> {
         toast("云端更新失败，重启脚本再试一下");
         window.action.setText('更新失败🚨');
     }
-    
+
 })
 
 
@@ -118,9 +121,9 @@ window.action.click(() => {
         //判断输入时间是否正确
         try {
             a = parseFloat(window.oneStart.text()),
-            b = parseFloat(window.oneEnd.text()),
-            c = parseFloat(window.twoStart.text()),
-            d = parseFloat(window.twoEnd.text());
+                b = parseFloat(window.oneEnd.text()),
+                c = parseFloat(window.twoStart.text()),
+                d = parseFloat(window.twoEnd.text());
             e = parseFloat(window.threeStart.text())
             f = parseFloat(window.threeEnd.text())
             if (!(a < b && b < c && c < d && d < e && e < f)) {
@@ -153,20 +156,27 @@ window.adjust.click(() => {
 //相当于堵塞直到点击了运行，因为sleep不能再UI线程执行
 while (true) {
     if (window.action.getText() == '运行中..⚡') {
-        //主要的逻辑函数
-        cloudFunction([{
-            name:window.oneName.text(),
-            start:a,
-            end:b,
-        },{
-            name:window.twoName.text(),
-            start:c,
-            end:d,
-        },{
-            name:window.threeName.text(),
-            start:e,
-            end:f,
-        }])
+        try {
+            //主要的逻辑函数
+            cloudFunction([{
+                name: window.oneName.text(),
+                start: a,
+                end: b,
+            }, {
+                name: window.twoName.text(),
+                start: c,
+                end: d,
+            }, {
+                name: window.threeName.text(),
+                start: e,
+                end: f,
+            }])
+        } catch (err) {
+            log("出错了，请复制错误日志并发送给开发人员!",err)
+            console.show()
+            sleep(999999999)
+        }
+
     } else {
         sleep(1000)
     }

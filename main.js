@@ -352,8 +352,6 @@ function ExitApp() {
 
 
 return function (arr) {
-    //所有任务完成得状态位，在最后一位主播结束后被改变，执行第二天循环
-    let hasDone = false;
     let now = new Date();
     //当前时间的的在本天中的秒数
     let tdSecond = now.getHours() * 3600 + now.getMinutes() * 60 + now.getSeconds();
@@ -367,10 +365,15 @@ return function (arr) {
         v.start = v.start * 3600;
         v.end = v.end * 3600;
         v.timers = [];
+        log(i,v.start,v.end,tdSecond)
         if (v.end > tdSecond) {
+            log(i)
+            log(v.start > tdSecond ? (v.start - tdSecond) * 1000 : 0)
+            log(v.end - tdSecond)
             v.timers[0] = setTimeout(() => {
+                log("定时器进入")
                 v.thread = threads.start(function () {
-                    //TODO
+                    log("线程进入")
                     OpenToRoom(v.name)
                     FindHB()
                     setInterval(() => {

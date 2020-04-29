@@ -1,4 +1,11 @@
-//企鹅电竞的状态 close关闭 open开启  inRoom在房间 
+//时间配置
+let config={
+    bulletTime:10, //10秒
+    getTaskTime:60 //1分钟
+    // bulletTime:1800, //30分钟
+    // getTaskTime:900 //15分钟
+}
+//企鹅电竞的状态 close关闭 open开启  inRoom在房间  getTask在房间领取任务  getHB在房间领取红包
 let appStatus = "close"
 
 var words = [
@@ -70,7 +77,7 @@ function getRandomBulletScreen() {
 
 function sendBulletScreen() {
     if(appStatus!="inRoom"){
-        setTimeout(sendBulletScreen,Math.floor(Math.random()*1000*1800))
+        setTimeout(sendBulletScreen,Math.floor(Math.random()*1000*config.bulletTime))
         return
     }
     if (setText(0, getRandomBulletScreen())) {
@@ -79,10 +86,7 @@ function sendBulletScreen() {
         } else {
             click('发送')
         }
-    }
-    //15分钟内随机
-    // setTimeout(sendBulletScreen,Math.floor(Math.random()*1000*1800))
-    setTimeout(sendBulletScreen, Math.floor(Math.random() * 1000 * 10))
+    }setTimeout(sendBulletScreen, Math.floor(Math.random() * 1000 * config.bulletTime))
 }
 
 // sendBulletScreen()
@@ -116,8 +120,6 @@ function ExitApp() {
 // ExitApp()
 
 function main(arr) {
-    //所有任务完成得状态位，在最后一位主播结束后被改变，执行第二天循环
-    let hasDone = false;
     let now = new Date();
     //当前时间的的在本天中的秒数
     let tdSecond = now.getHours() * 3600 + now.getMinutes() * 60 + now.getSeconds();
@@ -131,10 +133,27 @@ function main(arr) {
         v.start = v.start * 3600;
         v.end = v.end * 3600;
         v.timers = [];
+        log(i,v.start,v.end,tdSecond)
         if (v.end > tdSecond) {
+            log(i)
+            log(v.start > tdSecond ? (v.start - tdSecond) * 1000 : 0)
+            log(v.end - tdSecond)
             v.timers[0] = setTimeout(() => {
+                log("定时器进入")
                 v.thread = threads.start(function () {
-                    //TODO
+                    log("线程进入")
+                    OpenToRoom(v.name)
+                    FindHB()
+                    setInterval(() => {
+                        closeWindow()
+                        checkIsResponse(v.name)
+                        RefreshSP()
+                    }, 5000)
+                    setInterval(() => {
+                        FindHB()
+                        GetTask()
+                    }, config.getTaskTime * 1000)
+                    sendBulletScreen()
                 });
             }, v.start > tdSecond ? (v.start - tdSecond) * 1000 : 0)
 
@@ -143,19 +162,11 @@ function main(arr) {
                 v.timers.forEach(v => clearTimeout(v));
                 v.thread && v.thread.interrupt();
                 ExitApp()
-                //最后一个完成的状态位设置为完成
-                hasDone = i == 2
             }, (v.end - tdSecond) * 1000)
         }
     })
 
-    while (true) {
-        if (hasDone) {
-            break
-        } else {
-            sleep(1000)
-        }
-    }
+    
 
 }
 
@@ -163,19 +174,19 @@ function main(arr) {
 
 
 
-// main([{
-//     name:'MR.滴落',
-//     start:16,
-//     end:17,
-// },{
-//     name:'MR.滴落',
-//     start:17.01,
-//     end:19,
-// },{
-//     name:'MR.滴落',
-//     start:19.01,
-//     end:26,
-// }])
+main([{
+    name:'老实敦厚的笑笑',
+    start:2.05,
+    end:17,
+},{
+    name:'老实敦厚的笑笑',
+    start:17.01,
+    end:24.7,
+},{
+    name:'老实敦厚的笑笑',
+    start:24.75,
+    end:26,
+}])
 
 //打开APP到关注
 function OpenToRoom(name) {
@@ -229,9 +240,10 @@ function ChoosePerson(name) {
             OpenToRoom(name)
             break
         }
-        console.log("主播", name, depth(25).desc(name).findOnce())
-        if (depth(25).desc(name).findOnce()) {
-            depth(25).desc(name).findOnce().parent().click()
+        let zb=depth(25).desc(name).findOne(4000)
+        console.log("主播", name, zb)
+        if (zb) {
+            zb.parent() && zb.parent().click()
             appStatus = "inRoom"
             break;
         } else {
@@ -253,7 +265,9 @@ function ChoosePerson(name) {
 
 //进去第一步，找口令红包
 function FindHB() {
+    log("找口令红包",appStatus)
     if (appStatus != "inRoom") return
+    appStatus="getHB"
     sleep(30000)
     //打开所有
     var openAll;
@@ -264,15 +278,18 @@ function FindHB() {
             openAll = list.get(list.size() - 1)
         }
     }else{
+        appStatus="inRoom"
         return
     }
+    log("找口令红包openAll",openAll)
     openAll.click()
     toast("查看是否有口令红包")
     //打开抽奖
-    if(className("android.view.View").desc("抽奖").findOnce()){
+    if(className("android.view.View").desc("抽奖").findOne(30000)){
         className("android.view.View").desc("抽奖").findOnce().parent().click()
     }else{
         back()
+        appStatus="inRoom"
         return
     }
     //判断是否为口令红包
@@ -295,6 +312,7 @@ function FindHB() {
         sleep(4000)
         back()
     }
+    appStatus="inRoom"
 }
 
 
@@ -355,13 +373,14 @@ function GetTask() {
             className("android.view.View").desc("任务").findOnce().parent() &&className("android.view.View").desc("任务").findOnce().parent().click()
         }else{
             back()
+            appStatus = "inRoom"
             return
         }
         
 
 
         //点开任务
-        // renWu("新手任务")
+        renWu("新手任务")
         renWu("日常任务")
         renWu("直播间任务")
         renWu("活动任务")
@@ -396,29 +415,27 @@ function GetTask() {
                 element.parent() && element.parent().click() 
                 sleep(1500)
             })
-            sleep(5000)
+            sleep(3000)
             //领取任务奖励
+            log("领取按钮",desc("领取").find().empty())
             desc("领取").find().forEach(element => {
-                if (element.parent()) {
-                    element.parent().click()
+                log("领取按钮",element)
+                element.parent() && element.parent().click()
                     sleep(1500)
-                }
-
-            });
+               });
         }
     
 
 }
 
-appStatus = "inRoom"
 
 // OpenToRoom('老实敦厚的笑笑')
 // FindHB()
-setInterval(()=>{
-    closeWindow()
-    checkIsResponse('老实敦厚的笑笑')
-    RefreshSP()
-},5000)
+// setInterval(()=>{
+//     closeWindow()
+//     checkIsResponse('老实敦厚的笑笑')
+//     RefreshSP()
+// },5000)
 // setInterval(()=>{
 //     GetTask()
 // },15*60*1000)

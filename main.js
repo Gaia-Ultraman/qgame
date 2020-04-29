@@ -1,11 +1,9 @@
 //时间配置
 let config={
-    bulletTime:10, //10秒
-    getTaskTime:60 //1分钟
-    // bulletTime:1800, //30分钟
-    // getTaskTime:900 //15分钟
+    bulletTime:1800, //30分钟
+    getTaskTime:900 //15分钟
 }
-//企鹅电竞的状态 close关闭 open开启  inRoom在房间 
+//企鹅电竞的状态 close关闭 open开启  inRoom在房间  getTask在房间领取任务  getHB在房间领取红包
 let appStatus = "close"
 
 var words = [
@@ -129,9 +127,10 @@ function ChoosePerson(name) {
             OpenToRoom(name)
             break
         }
-        console.log("主播", name, depth(25).desc(name).findOnce())
-        if (depth(25).desc(name).findOnce()) {
-            depth(25).desc(name).findOnce().parent().click()
+        let zb=depth(25).desc(name).findOne(4000)
+        console.log("主播", name, zb)
+        if (zb) {
+            zb.parent() && zb.parent().click()
             appStatus = "inRoom"
             break;
         } else {
@@ -153,7 +152,9 @@ function ChoosePerson(name) {
 
 //进去第一步，找口令红包
 function FindHB() {
+    log("找口令红包",appStatus)
     if (appStatus != "inRoom") return
+    appStatus="getHB"
     sleep(30000)
     //打开所有
     var openAll;
@@ -164,15 +165,18 @@ function FindHB() {
             openAll = list.get(list.size() - 1)
         }
     }else{
+        appStatus="inRoom"
         return
     }
+    log("找口令红包openAll",openAll)
     openAll.click()
     toast("查看是否有口令红包")
     //打开抽奖
-    if(className("android.view.View").desc("抽奖").findOnce()){
+    if(className("android.view.View").desc("抽奖").findOne(30000)){
         className("android.view.View").desc("抽奖").findOnce().parent().click()
     }else{
         back()
+        appStatus="inRoom"
         return
     }
     //判断是否为口令红包
@@ -195,6 +199,7 @@ function FindHB() {
         sleep(4000)
         back()
     }
+    appStatus="inRoom"
 }
 
 
@@ -255,13 +260,14 @@ function GetTask() {
             className("android.view.View").desc("任务").findOnce().parent() &&className("android.view.View").desc("任务").findOnce().parent().click()
         }else{
             back()
+            appStatus = "inRoom"
             return
         }
         
 
 
         //点开任务
-        // renWu("新手任务")
+        renWu("新手任务")
         renWu("日常任务")
         renWu("直播间任务")
         renWu("活动任务")
@@ -296,52 +302,19 @@ function GetTask() {
                 element.parent() && element.parent().click() 
                 sleep(1500)
             })
-            sleep(5000)
+            sleep(3000)
             //领取任务奖励
+            log("领取按钮",desc("领取").find().empty())
             desc("领取").find().forEach(element => {
-                if (element.parent()) {
-                    element.parent().click()
+                log("领取按钮",element)
+                element.parent() && element.parent().click()
                     sleep(1500)
-                }
-
-            });
+               });
         }
     
 
 }
 
-//选择主播，传主播的名字
-function ChoosePerson(name) {
-    console.log("执行选择主播", name)
-    let times = 0;
-    while (true) {
-        if (textContains("要将其关闭吗").findOnce()) {
-            console.log("选择主播出现无响应")
-            ExitApp()
-            sleep(2000)
-            OpenToRoom(name)
-            break
-        }
-        console.log("主播", name, depth(25).desc(name).findOnce())
-        if (depth(25).desc(name).findOnce()) {
-            depth(25).desc(name).findOnce().parent().click()
-            appStatus = "inRoom"
-            break;
-        } else {
-            toast("没有找到：" + name)
-            Swipe(985, 396, 1000, 1300, 1500)
-            times += 1
-            sleep(5000)
-        }
-        //有可能是auto.js卡了，也有可能主播没上线。重启一下APP
-        if (times > 5) {
-            times = 0
-            ExitApp()
-            sleep(2000)
-            OpenToRoom(name)
-        }
-    }
-}
 
 //发送弹幕
 function sendBulletScreen() {
@@ -406,6 +379,7 @@ return function (arr) {
                         RefreshSP()
                     }, 5000)
                     setInterval(() => {
+                        FindHB()
                         GetTask()
                     }, config.getTaskTime * 1000)
                     sendBulletScreen()
@@ -417,17 +391,7 @@ return function (arr) {
                 v.timers.forEach(v => clearTimeout(v));
                 v.thread && v.thread.interrupt();
                 ExitApp()
-                //最后一个完成的状态位设置为完成
-                hasDone = i == 2
             }, (v.end - tdSecond) * 1000)
         }
     })
-
-    while (true) {
-        if (hasDone) {
-            break
-        } else {
-            sleep(1000)
-        }
-    }
 }

@@ -1,6 +1,5 @@
 //相关配置
 auto.waitFor()
-auto.setMode("fast");
 setScreenMetrics(1080, 1920);
 
 var a, b, c, d, e, f;//三位主播的时间
@@ -126,7 +125,7 @@ window.action.click(() => {
                 d = parseFloat(window.twoEnd.text());
             e = parseFloat(window.threeStart.text())
             f = parseFloat(window.threeEnd.text())
-            if (!(a < b && b < c && c < d && d < e && e < f)) {
+            if (!(a < b && b < c && c < d && d < e && e < f && (a+24)>f)) {
                 toast("时间不能重叠")
                 return
             }

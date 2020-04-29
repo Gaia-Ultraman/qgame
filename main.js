@@ -1,7 +1,9 @@
 //时间配置
 let config={
-    bulletTime:1800, //30分钟
-    getTaskTime:900 //15分钟
+    bulletTime:10, //10秒
+    getTaskTime:60 //1分钟
+    // bulletTime:1800, //30分钟
+    // getTaskTime:900 //15分钟
 }
 //企鹅电竞的状态 close关闭 open开启  inRoom在房间 
 let appStatus = "close"
@@ -344,7 +346,7 @@ function ChoosePerson(name) {
 //发送弹幕
 function sendBulletScreen() {
     if (appStatus != "inRoom") {
-        setTimeout(sendBulletScreen, Math.floor(Math.random() * 1000 * 1800))
+        setTimeout(sendBulletScreen, Math.floor(Math.random() * 1000 * config.bulletTime))
         return
     }
     if (setText(0, getRandomBulletScreen())) {
@@ -355,7 +357,7 @@ function sendBulletScreen() {
         }
     }
     //30分钟内随机
-    setTimeout(sendBulletScreen, Math.floor(Math.random() * 1000 * 1800))
+    setTimeout(sendBulletScreen, Math.floor(Math.random() * 1000 * config.bulletTime))
 }
 
 //退出APP
@@ -405,7 +407,7 @@ return function (arr) {
                     }, 5000)
                     setInterval(() => {
                         GetTask()
-                    }, 15 * 60 * 1000)
+                    }, config.getTaskTime * 1000)
                     sendBulletScreen()
                 });
             }, v.start > tdSecond ? (v.start - tdSecond) * 1000 : 0)

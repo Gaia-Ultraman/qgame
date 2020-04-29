@@ -1,3 +1,6 @@
+//企鹅电竞的状态 close关闭 open开启  inRoom在房间 
+let appStatus = "close"
+
 var words = [
     '主播6666!',
     '主播加油,我相信你是最棒的!',
@@ -66,6 +69,10 @@ function getRandomBulletScreen() {
 }
 
 function sendBulletScreen() {
+    if(appStatus!="inRoom"){
+        setTimeout(sendBulletScreen,Math.floor(Math.random()*1000*1800))
+        return
+    }
     if (setText(0, getRandomBulletScreen())) {
         if (id("send").findOnce()) {
             id("send").findOnce().click()
@@ -80,78 +87,10 @@ function sendBulletScreen() {
 
 // sendBulletScreen()
 //直播间出现奇怪的窗口，点击关闭
+
 // id("close").findOnce().click()
-//领取任务奖励
-function GetTask() {
-    threads.start(function () {
-        console.log("领取任务奖励!")
-        //打开所有
-        var openAll;
-        while (true) {
-            var list = id("com.tencent.qgame:id/playing_entrance_container").findOne(10000).children();
-            console.log("所有", list, list.size())
-            if (list.size() > 2) {
-                openAll = list.get(list.size() - 1)
-                break
-            } else {
-                sleep(1000)
-            }
-        }
+//id("iv_close").findOne().click()
 
-        toast("查看是否有可领取任务")
-        //打开所有
-        openAll.click()
-        //打开任务
-        className("android.view.View").desc("任务").findOne().parent().click()
-
-
-        //点开任务
-        renWu("新手任务")
-        renWu("日常任务")
-        renWu("直播间任务")
-        renWu("活动任务")
-        renWu("守护任务")
-        //领取礼盒
-        className("ImageView").depth(13).find().forEach(element => {
-            element.parent().click()
-            sleep(300)
-        })
-        sleep(3000)
-        back()
-        sleep(3000)
-        back()
-        // if (className("android.widget.ImageView").clickable(true).findOne(1000)) {
-        //     className("android.widget.ImageView").clickable(true).findOne(1000).click()
-        // }
-
-
-        function renWu(name) {
-            var rw = className("android.view.View").desc(name).findOne(30000)
-            if (!rw) {
-                toast("未找到" + name)
-                return
-            }
-            toast(name)
-            rw.parent().click()
-            //等待任务列表加载出来
-            sleep(2000)
-            //若果有展开栏
-            className("ImageView").depth(19).find().forEach(element => {
-                element.parent() ? element.parent().click() : null
-                sleep(300)
-            })
-            //领取任务奖励
-            desc("领取").find().forEach(element => {
-                if (element.parent()) {
-                    element.parent().click()
-                    sleep(1500)
-                }
-
-            });
-        }
-    })
-
-}
 
 // GetTask()
 
@@ -170,45 +109,53 @@ function ExitApp() {
         back()
         sleep(300)
     }
+    appStatus = "close"
 }
 
 
 // ExitApp()
 
-function main(arr){
-    //应用所在状态  APP为关闭close   APP在打开
-    let appStatus="close"
+function main(arr) {
     //所有任务完成得状态位，在最后一位主播结束后被改变，执行第二天循环
-    let hasDone=false;
+    let hasDone = false;
     let now = new Date();
     //当前时间的的在本天中的秒数
     let tdSecond = now.getHours() * 3600 + now.getMinutes() * 60 + now.getSeconds();
-    //把传入的小时时间全部转换为秒数
-    arr.forEach(v=>{
-        v.start=v.start*3600;
-        v.end=v.end*3600;
-    })
     //如果目前的秒数加一天秒数的都比结束的秒数小，这种情况一般是凌晨启动脚本，然后在凌晨还在直播
-    if((tdSecond+24*3600)<arr[3].end*3600){
-        tdSecond+=24*3600
+    if ((tdSecond + 24 * 3600) < arr[2].end * 3600) {
+        tdSecond += 24 * 3600
     }
 
-    //设置第一个主播任务
-    if(arr[0].end>tdSecond){
-        //进入直播间
-        setTimeout(()=>{
-            threads.start(function(){
-                 //TODO
-            });
-        },arr[0].start>tdSecond?(arr[0].start-tdSecond)*1000:0)
+    //把传入的小时时间全部转换为秒数
+    arr.forEach((v, i) => {
+        v.start = v.start * 3600;
+        v.end = v.end * 3600;
+        v.timers = [];
+        if (v.end > tdSecond) {
+            v.timers[0] = setTimeout(() => {
+                v.thread = threads.start(function () {
+                    //TODO
+                });
+            }, v.start > tdSecond ? (v.start - tdSecond) * 1000 : 0)
 
-        //到点了关闭
-        setTimeout(()=>{
-            //TODO
-        },(arr[0].end-tdSecond)*1000)
+            //到点了关闭
+            v.timers[1] = setTimeout(() => {
+                v.timers.forEach(v => clearTimeout(v));
+                v.thread && v.thread.interrupt();
+                ExitApp()
+                //最后一个完成的状态位设置为完成
+                hasDone = i == 2
+            }, (v.end - tdSecond) * 1000)
+        }
+    })
+
+    while (true) {
+        if (hasDone) {
+            break
+        } else {
+            sleep(1000)
+        }
     }
-
-    //
 
 }
 
@@ -216,16 +163,263 @@ function main(arr){
 
 
 
-main([{
-    name:'MR.滴落',
-    start:16,
-    end:17,
-},{
-    name:'MR.滴落',
-    start:17.01,
-    end:19,
-},{
-    name:'MR.滴落',
-    start:19.01,
-    end:26,
-}])
+// main([{
+//     name:'MR.滴落',
+//     start:16,
+//     end:17,
+// },{
+//     name:'MR.滴落',
+//     start:17.01,
+//     end:19,
+// },{
+//     name:'MR.滴落',
+//     start:19.01,
+//     end:26,
+// }])
+
+//打开APP到关注
+function OpenToRoom(name) {
+    launchApp("企鹅电竞")
+    appStatus = "open"
+    //关闭广告
+    var jump = className("LinearLayout").boundsContains(883, 120, 1035, 187).clickable().findOne(8000);
+    if (jump) {
+        console.log(jump)
+        // click(883,120,1035,187)
+        jump.click();
+    }
+    //关掉一些莫名其妙的东西
+    sleep(8000)
+    back()
+    sleep(4000)
+    back()
+    sleep(4000)
+    back()
+    sleep(4000)
+
+    checkIsResponse(name)
+    var gz = text("关注").findOne(20000)
+    if (gz) {
+        gz.parent() && gz.parent().click()
+        ChoosePerson(name)
+    } else {
+        ExitApp()
+        sleep(2000)
+        OpenToRoom(name)
+    }
+}
+
+//检测是否无响应
+function checkIsResponse(name) {
+    if (textContains("要将其关闭吗").findOnce()) {
+        ExitApp()
+        OpenToRoom(name)
+    }
+}
+
+//选择主播，传主播的名字
+function ChoosePerson(name) {
+    console.log("执行选择主播", name)
+    let times = 0;
+    while (true) {
+        if (textContains("要将其关闭吗").findOnce()) {
+            console.log("选择主播出现无响应")
+            ExitApp()
+            sleep(2000)
+            OpenToRoom(name)
+            break
+        }
+        console.log("主播", name, depth(25).desc(name).findOnce())
+        if (depth(25).desc(name).findOnce()) {
+            depth(25).desc(name).findOnce().parent().click()
+            appStatus = "inRoom"
+            break;
+        } else {
+            toast("没有找到：" + name)
+            Swipe(985, 396, 1000, 1300, 1500)
+            times += 1
+            sleep(5000)
+        }
+        //有可能是auto.js卡了，也有可能主播没上线。重启一下APP
+        if (times > 5) {
+            times = 0
+            ExitApp()
+            sleep(2000)
+            OpenToRoom(name)
+        }
+    }
+}
+
+
+//进去第一步，找口令红包
+function FindHB() {
+    if (appStatus != "inRoom") return
+    sleep(30000)
+    //打开所有
+    var openAll;
+    var contaniner = id("com.tencent.qgame:id/playing_entrance_container").findOne(10000)
+    if (contaniner) {
+        var list = contaniner.children();
+        if (list && list.size() > 2) {
+            openAll = list.get(list.size() - 1)
+        }
+    }else{
+        return
+    }
+    openAll.click()
+    toast("查看是否有口令红包")
+    //打开抽奖
+    if(className("android.view.View").desc("抽奖").findOnce()){
+        className("android.view.View").desc("抽奖").findOnce().parent().click()
+    }else{
+        back()
+        return
+    }
+    //判断是否为口令红包
+    toast("红包扫描30秒，如果网不好也会不领取")
+    var hb = className("android.view.View").desc("去发送").findOne(30000)
+    if (hb) {
+        //如果 去发送 点击成功了
+        if (hb.parent() && hb.parent().click()) {
+            let send = id("send").findOne(10000)
+            send && send.click()
+        } else {
+            sleep(4000)
+            back()
+            sleep(4000)
+            back()
+        }
+    } else {
+        sleep(4000)
+        back()
+        sleep(4000)
+        back()
+    }
+}
+
+
+//刷新一次视频,如果网络不好会返回关注那里重新进
+function RefreshSP() {
+    log("RefreshSP")
+    if (appStatus != "inRoom") return
+    if (textContains("网络未连接").findOnce() || textContains("接收不到主播信号了").findOnce()) {
+        log("RefreshSP...")
+        if (id("com.tencent.qgame:id/video_layout").exists()) {
+            Tap(740, 140)
+            sleep(1000)
+            let temp = id("com.tencent.qgame:id/top_bar_danmaku_filter").findOne(3000)
+            if (temp) {
+                temp.parent() && temp.parent().child(2) && temp.parent().child(2).click()
+            }
+        }
+    }
+}
+
+
+//房间内弹出的奇怪窗口
+function closeWindow(){
+    if (appStatus != "inRoom") return
+    //升级的弹窗
+    id("com.tencent.qgame:id/iv_close").findOnce() && id("com.tencent.qgame:id/iv_close").findOnce().click()
+    //防止主播提前下播被跳走
+    id("com.tencent.qgame:id/close").findOnce() && id("com.tencent.qgame:id/close").findOnce().click()
+}
+
+
+//领取任务奖励
+function GetTask() {
+        log("领取任务奖励!")
+        if (appStatus != "inRoom") return
+        appStatus='getTask'
+        //打开所有
+        log("打开所有")
+        var openAll;
+        if(id("com.tencent.qgame:id/playing_entrance_container").findOne(10000)){
+            var list = id("com.tencent.qgame:id/playing_entrance_container").findOnce().children();
+            if (list.size() > 2) {
+                openAll = list.get(list.size() - 1)
+            } else {
+                appStatus = "inRoom"
+                return
+            }
+        }else{
+            appStatus = "inRoom"
+            return
+        }
+
+        toast("查看是否有可领取任务")
+        //打开所有
+        openAll.click()
+        //打开任务
+        if(className("android.view.View").desc("任务").findOne(30000)){
+            className("android.view.View").desc("任务").findOnce().parent() &&className("android.view.View").desc("任务").findOnce().parent().click()
+        }else{
+            back()
+            return
+        }
+        
+
+
+        //点开任务
+        // renWu("新手任务")
+        renWu("日常任务")
+        renWu("直播间任务")
+        renWu("活动任务")
+        renWu("守护任务")
+        //领取礼盒
+        className("ImageView").depth(13).find().forEach(element => {
+            element.parent().click()
+            sleep(300)
+        })
+        sleep(3000)
+        back()
+        sleep(3000)
+        back()
+
+        //领取完成之后设置状态
+        appStatus = "inRoom"
+
+        function renWu(name) {
+            var rw = className("android.view.View").desc(name).findOne(30000)
+            if (!rw) {
+                toast("未找到" + name)
+                return
+            }
+            toast(name)
+            rw.parent().click()
+            //等待任务列表加载出来
+            sleep(5000)
+            //若果有展开栏
+            log(className("android.widget.ImageView").depth(19).find().empty())
+            className("android.widget.ImageView").depth(19).find().forEach(element => {
+                log("有展开栏")
+                element.parent() && element.parent().click() 
+                sleep(1500)
+            })
+            sleep(5000)
+            //领取任务奖励
+            desc("领取").find().forEach(element => {
+                if (element.parent()) {
+                    element.parent().click()
+                    sleep(1500)
+                }
+
+            });
+        }
+    
+
+}
+
+appStatus = "inRoom"
+
+// OpenToRoom('老实敦厚的笑笑')
+// FindHB()
+setInterval(()=>{
+    closeWindow()
+    checkIsResponse('老实敦厚的笑笑')
+    RefreshSP()
+},5000)
+// setInterval(()=>{
+//     GetTask()
+// },15*60*1000)
+// sendBulletScreen()

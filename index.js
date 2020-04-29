@@ -6,39 +6,39 @@ var a, b, c, d, e, f;//三位主播的时间
 var cloudFunction = () => { };//云端拉取的主函数载体
 var window = floaty.window(
     <vertical bg="#F8F8FF" padding="10" w="auto" gravity="center" >
-        <text text="🌼企鹅电竞助手-云更新版🌼" textSize="15sp" w="auto" />
+        <text text="🌼企鹅电竞助手-云更新版🌼" textSize="14sp" w="auto" />
 
         {/* 一号主播 */}
         <horizontal w="auto" marginTop="10">
             <text text="一号主播:" />
-            <input id="oneName" textSize="15sp" hint="名字" focusable="true" />
-            <input id="oneStart" inputType="number|numberDecimal" textSize="15sp" hint="开始" focusable="true" /><text text="-" />
-            <input id="oneEnd" inputType="number|numberDecimal" textSize="15sp" hint="结束" focusable="true" />
+            <input id="oneName" textSize="12sp" hint="名字" focusable="true" w="60"/>
+            <input id="oneStart" inputType="number|numberDecimal" textSize="12sp" hint="开始" focusable="true" /><text text="-" />
+            <input id="oneEnd" inputType="number|numberDecimal" textSize="12sp" hint="结束" focusable="true" />
         </horizontal>
         {/* 二号主播 */}
         <horizontal w="auto" marginTop="10">
             <text text="二号主播:" />
-            <input id="twoName" textSize="15sp" hint="名字" focusable="true" />
-            <input id="twoStart" inputType="number|numberDecimal" textSize="15sp" hint="开始" focusable="true" /><text text="-" />
-            <input id="twoEnd" inputType="number|numberDecimal" textSize="15sp" hint="结束" focusable="true" />
+            <input id="twoName" textSize="12sp" hint="名字" focusable="true" w="60"/>
+            <input id="twoStart" inputType="number|numberDecimal" textSize="12sp" hint="开始" focusable="true" /><text text="-" />
+            <input id="twoEnd" inputType="number|numberDecimal" textSize="12sp" hint="结束" focusable="true" />
         </horizontal>
 
         {/* 三号主播 */}
         <horizontal w="auto" marginTop="10">
             <text text="三号主播:" />
-            <input id="threeName" textSize="15sp" hint="名字" focusable="true" />
-            <input id="threeStart" inputType="number|numberDecimal" textSize="15sp" hint="开始" focusable="true" /><text text="-" />
-            <input id="threeEnd" inputType="number|numberDecimal" textSize="15sp" hint="结束" focusable="true" />
+            <input id="threeName" textSize="12sp" hint="名字" focusable="true" w="60"/>
+            <input id="threeStart" inputType="number|numberDecimal" textSize="12sp" hint="开始" focusable="true" /><text text="-" />
+            <input id="threeEnd" inputType="number|numberDecimal" textSize="12sp" hint="结束" focusable="true" />
         </horizontal>
 
         <horizontal w="auto">
-            <button id="action" textSize="15sp" text="更新中..🚦" h="45" w="110" />
-            <button id="adjust" textSize="15sp" text="释放焦点🌈" h="45" w="110" />
+            <button id="action" textSize="12sp" text="更新中..🚦" h="45"  />
+            <button id="adjust" textSize="12sp" text="释放焦点🌈" h="45" />
         </horizontal>
     </vertical>
 )
 window.requestFocus();
-window.setPosition(150, 230)
+window.setPosition(250, 400)
 //绑定方法延迟一下，不然绑不上
 sleep(100)
 //六个打开数字键盘的input
@@ -95,16 +95,21 @@ getStorage()
 
 //获取云端代码  //加载代码文件
 getCode((res) => {
-    log("CB",res,typeof res)
+    log("CB", res, typeof res)
     if (res) {
         //发布的时候使用这个
         cloudFunction = Function(res)();
         // cloudFunction = Function('return function(arr){console.log("参数:",arr)}')();
         toast("云端代码更新成功⚡")
-        window.action.setText('开始运行🚀');
+        ui.run(function(){
+            window.action.setText('开始运行🚀');
+        });
+        
     } else {
         toast("云端更新失败，重启脚本再试一下");
-        window.action.setText('更新失败🚨');
+        ui.run(function(){
+            window.action.setText('更新失败🚨');
+        });
     }
 
 })
@@ -125,7 +130,7 @@ window.action.click(() => {
                 d = parseFloat(window.twoEnd.text());
             e = parseFloat(window.threeStart.text())
             f = parseFloat(window.threeEnd.text())
-            if (!(a < b && b < c && c < d && d < e && e < f && (a+24)>f)) {
+            if (!(a < b && b < c && c < d && d < e && e < f && (a + 24) > f)) {
                 toast("时间不能重叠")
                 return
             }
@@ -155,26 +160,21 @@ window.adjust.click(() => {
 //相当于堵塞直到点击了运行，因为sleep不能再UI线程执行
 while (true) {
     if (window.action.getText() == '运行中..⚡') {
-        try {
-            //主要的逻辑函数
-            cloudFunction([{
-                name: window.oneName.text(),
-                start: a,
-                end: b,
-            }, {
-                name: window.twoName.text(),
-                start: c,
-                end: d,
-            }, {
-                name: window.threeName.text(),
-                start: e,
-                end: f,
-            }])
-        } catch (err) {
-            log("出错了，请复制错误日志并发送给开发人员!",err)
-            console.show()
-            sleep(999999999)
-        }
+        window.close()
+        //主要的逻辑函数
+        cloudFunction([{
+            name: window.oneName.text(),
+            start: a,
+            end: b,
+        }, {
+            name: window.twoName.text(),
+            start: c,
+            end: d,
+        }, {
+            name: window.threeName.text(),
+            start: e,
+            end: f,
+        }])
 
     } else {
         sleep(1000)

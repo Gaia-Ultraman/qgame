@@ -1,11 +1,11 @@
 //时间配置
 let config = {
-    // bulletTime: 1800, //30分钟
-    // getTaskTime: 900, //15分钟
-    // getHbTime:300 //5分钟
-    bulletTime: 10,  
-    getTaskTime: 120,  
-    getHbTime:60  
+    bulletTime: 1800, //30分钟
+    getTaskTime: 900, //15分钟
+    getHbTime:300 //5分钟
+    // bulletTime: 10,  
+    // getTaskTime: 120,  
+    // getHbTime:60  
 }
 //企鹅电竞的状态 close关闭 open开启  inRoom在房间  getTask在房间领取任务  getHB在房间领取红包
 let appStatus = "close"

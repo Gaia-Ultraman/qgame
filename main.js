@@ -120,6 +120,7 @@ function ChoosePerson(name) {
     console.log("执行选择主播", name)
     let times = 0;
     while (true) {
+        if(appStatus=="inRoom")break;
         if (textContains("要将其关闭吗").findOnce()) {
             console.log("选择主播出现无响应")
             ExitApp()
@@ -130,6 +131,8 @@ function ChoosePerson(name) {
         log("主播", name, depth(25).desc(name).findOnce())
         if (depth(25).desc(name).findOnce()) {
             depth(25).desc(name).findOnce() && depth(25).desc(name).findOnce().parent() &&depth(25).desc(name).findOnce().parent().click()
+            appStatus="inRoom"
+            sleep(2000)
             break;
         } else {
             toast("没有找到：" + name)
@@ -144,6 +147,7 @@ function ChoosePerson(name) {
             sleep(2000)
             OpenToRoom(name)
         }
+        
     }
 }
 

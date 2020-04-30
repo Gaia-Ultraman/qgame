@@ -175,7 +175,7 @@ function FindHB() {
     toast("查看是否有口令红包")
     //打开抽奖
     if (className("android.view.View").desc("抽奖").findOne(30000)) {
-        className("android.view.View").desc("抽奖").findOnce().parent().click()
+        className("android.view.View").desc("抽奖").findOnce() && className("android.view.View").desc("抽奖").findOnce().parent() && className("android.view.View").desc("抽奖").findOnce().parent().click()
     } else {
         back()
         appStatus = "inRoom"

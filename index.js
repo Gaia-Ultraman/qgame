@@ -160,7 +160,8 @@ window.adjust.click(() => {
 //相当于堵塞直到点击了运行，因为sleep不能再UI线程执行
 while (true) {
     if (window.action.getText() == '运行中..⚡') {
-        window.close()
+        //关闭UI
+        // window.close()
         //主要的逻辑函数
         cloudFunction([{
             name: window.oneName.text(),

@@ -127,11 +127,9 @@ function ChoosePerson(name) {
             OpenToRoom(name)
             break
         }
-        let zb = depth(25).desc(name).findOne(4000)
-        console.log("主播", name, zb)
-        if (zb) {
-            zb.parent() && zb.parent().click()
-            appStatus = "inRoom"
+        log("主播", name, depth(25).desc(name).findOnce())
+        if (depth(25).desc(name).findOnce()) {
+            depth(25).desc(name).findOnce() && depth(25).desc(name).findOnce().parent() &&depth(25).desc(name).findOnce().parent().click()
             break;
         } else {
             toast("没有找到：" + name)

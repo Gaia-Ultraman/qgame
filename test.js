@@ -1,9 +1,11 @@
 //时间配置
 let config={
-    bulletTime:10, //10秒
-    getTaskTime:60 //1分钟
-    // bulletTime:1800, //30分钟
-    // getTaskTime:900 //15分钟
+    // bulletTime: 1800, //30分钟
+    // getTaskTime: 900, //15分钟
+    // getHbTime:300 //5分钟
+    bulletTime: 10,  
+    getTaskTime: 120,  
+    getHbTime:60  
 }
 //企鹅电竞的状态 close关闭 open开启  inRoom在房间  getTask在房间领取任务  getHB在房间领取红包
 let appStatus = "close"
@@ -100,8 +102,10 @@ function sendBulletScreen() {
 
 //退出APP
 function ExitApp() {
+    log("进入退出")
     //强制停止
     var result = shell("am force-stop com.tencent.qgame", true);
+    log("退出ed:",result)
     if (result.code != 0) {
         //备用退出
         back()
@@ -116,10 +120,16 @@ function ExitApp() {
     appStatus = "close"
 }
 
+threads.start(function(){
+    ExitApp()
+})
+while(true){
 
-// ExitApp()
+}
 
 function main(arr) {
+    //完成状态
+    let hasDone = false;
     let now = new Date();
     //当前时间的的在本天中的秒数
     let tdSecond = now.getHours() * 3600 + now.getMinutes() * 60 + now.getSeconds();
@@ -132,61 +142,74 @@ function main(arr) {
     arr.forEach((v, i) => {
         v.start = v.start * 3600;
         v.end = v.end * 3600;
-        v.timers = [];
-        log(i,v.start,v.end,tdSecond)
+        v.thread = [];
+        log(i, v.start, v.end, tdSecond)
         if (v.end > tdSecond) {
-            log(i)
-            log(v.start > tdSecond ? (v.start - tdSecond) * 1000 : 0)
-            log(v.end - tdSecond)
-            v.timers[0] = setTimeout(() => {
-                log("定时器进入")
-                v.thread = threads.start(function () {
-                    log("线程进入")
+            v.thread[0] = threads.start(function () {
+                log("线程进入")
+                setTimeout(() => {
+                    log("定时器进入")
                     OpenToRoom(v.name)
                     FindHB()
+                    
                     setInterval(() => {
                         closeWindow()
                         checkIsResponse(v.name)
                         RefreshSP()
                     }, 5000)
+                //红包检测
                     setInterval(() => {
                         FindHB()
+                    }, config.getHbTime * 1000)
+                //任务领取
+                    setInterval(() => {
                         GetTask()
                     }, config.getTaskTime * 1000)
+                    
                     sendBulletScreen()
-                });
-            }, v.start > tdSecond ? (v.start - tdSecond) * 1000 : 0)
+                }, v.start > tdSecond ? (v.start - tdSecond) * 1000 : 0)
+            });
 
-            //到点了关闭
-            v.timers[1] = setTimeout(() => {
-                v.timers.forEach(v => clearTimeout(v));
-                v.thread && v.thread.interrupt();
-                ExitApp()
-            }, (v.end - tdSecond) * 1000)
+            v.thread[1] = threads.start(function () {
+                //到点了关闭
+                setTimeout(() => {
+                    v.thread.forEach(v=>v.interrupt());
+                    ExitApp()
+                    hasDone = i == 2
+                }, (v.end - tdSecond) * 1000)
+            })
+
         }
     })
+    while (true) {
+        if (hasDone) {
+            break
+        } else {
+            sleep(1000)
+        }
+    }
 
     
 
 }
 
 
+// log(getPackageName("脚本"))
 
 
-
-main([{
-    name:'老实敦厚的笑笑',
-    start:2.05,
-    end:17,
-},{
-    name:'老实敦厚的笑笑',
-    start:17.01,
-    end:24.7,
-},{
-    name:'老实敦厚的笑笑',
-    start:24.75,
-    end:26,
-}])
+// main([{
+//     name:'老实敦厚的笑笑',
+//     start:5.05,
+//     end:9,
+// },{
+//     name:'老实敦厚的笑笑',
+//     start:9.01,
+//     end:13.5,
+// },{
+//     name:'老实敦厚的笑笑',
+//     start:13.55,
+//     end:13.6,
+// }])
 
 //打开APP到关注
 function OpenToRoom(name) {

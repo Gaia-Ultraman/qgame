@@ -330,7 +330,7 @@ function sendBulletScreen() {
         return
     }
     if (setText(0, getRandomBulletScreen())) {
-        sleep(500)
+        sleep(2000)
         Tap(960,1820)
         // if (id("send").findOnce()) {
         //     id("send").findOnce().click()
@@ -406,9 +406,9 @@ return function (arr) {
             v.thread[1] = threads.start(function () {
                 //到点了关闭
                 setTimeout(() => {
-                    v.thread.forEach(v=>v.interrupt());
                     ExitApp()
                     hasDone = i == 2
+                    v.thread.forEach(v=>v.interrupt());
                 }, (v.end - tdSecond) * 1000)
             })
 

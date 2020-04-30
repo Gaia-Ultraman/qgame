@@ -1,7 +1,11 @@
 //时间配置
 let config = {
-    bulletTime: 1800, //30分钟
-    getTaskTime: 900 //15分钟
+    // bulletTime: 1800, //30分钟
+    // getTaskTime: 900, //15分钟
+    // getHbTime:300 //5分钟
+    bulletTime: 10,  
+    getTaskTime: 60,  
+    getHbTime:30  
 }
 //企鹅电竞的状态 close关闭 open开启  inRoom在房间  getTask在房间领取任务  getHB在房间领取红包
 let appStatus = "close"
@@ -377,15 +381,21 @@ return function (arr) {
                     log("定时器进入")
                     OpenToRoom(v.name)
                     FindHB()
+                    
                     setInterval(() => {
                         closeWindow()
                         checkIsResponse(v.name)
                         RefreshSP()
                     }, 5000)
+                //红包检测
                     setInterval(() => {
                         FindHB()
+                    }, config.getHbTime * 1000)
+                //任务领取
+                    setInterval(() => {
                         GetTask()
                     }, config.getTaskTime * 1000)
+                    
                     sendBulletScreen()
                 }, v.start > tdSecond ? (v.start - tdSecond) * 1000 : 0)
             });

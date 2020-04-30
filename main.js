@@ -4,8 +4,8 @@ let config = {
     // getTaskTime: 900, //15分钟
     // getHbTime:300 //5分钟
     bulletTime: 10,  
-    getTaskTime: 60,  
-    getHbTime:30  
+    getTaskTime: 120,  
+    getHbTime:60  
 }
 //企鹅电竞的状态 close关闭 open开启  inRoom在房间  getTask在房间领取任务  getHB在房间领取红包
 let appStatus = "close"
@@ -190,15 +190,16 @@ function FindHB() {
     var hb = className("android.view.View").desc("去发送").findOne(30000)
     if (hb) {
         //如果 去发送 点击成功了
-        if (hb.parent() && hb.parent().click()) {
-            let send = id("send").findOne(10000)
-            send && send.click()
-        } else {
-            sleep(4000)
-            back()
-            sleep(4000)
-            back()
-        }
+        // if (hb.parent() && hb.parent().click()) {
+        //     let send = id("send").findOne(10000)
+        //     send && send.click()
+        // } else {
+        //     sleep(4000)
+        //     back()
+        //     sleep(4000)
+        //     back()
+        // }
+        Tap(991,1085);
     } else {
         sleep(4000)
         back()
@@ -329,11 +330,13 @@ function sendBulletScreen() {
         return
     }
     if (setText(0, getRandomBulletScreen())) {
-        if (id("send").findOnce()) {
-            id("send").findOnce().click()
-        } else {
-            click('发送')
-        }
+        sleep(500)
+        Tap(960,1820)
+        // if (id("send").findOnce()) {
+        //     id("send").findOnce().click()
+        // } else {
+        //     click('发送')
+        // }
     }
     //30分钟内随机
     setTimeout(sendBulletScreen, Math.floor(Math.random() * 1000 * config.bulletTime))

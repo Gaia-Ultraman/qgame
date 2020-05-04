@@ -331,6 +331,7 @@ function GetTask() {
 
 //发送弹幕
 function sendBulletScreen() {
+    log("发送弹幕函数",appStatus)
     if (appStatus != "inRoom") {
         setTimeout(sendBulletScreen, Math.floor(Math.random() * 1000 * config.bulletTime))
         return

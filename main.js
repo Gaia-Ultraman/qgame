@@ -443,9 +443,9 @@ return function (arr) {
                         GetTask()
                     }, config.getTaskTime * 1000)
                     //检测代理是否掉线
-                    setInterval(() => {
-                        checkAgency()
-                    }, config.checkAgencyTime * 1000)
+                    // setInterval(() => {
+                    //     checkAgency()
+                    // }, config.checkAgencyTime * 1000)
                     sendBulletScreen()
                 }, v.start > tdSecond ? (v.start - tdSecond) * 1000 : 0)
             });

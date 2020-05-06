@@ -1,6 +1,6 @@
 //时间配置
 let config = {
-    bulletTime: 1800, //30分钟
+    bulletTime: 3600, //60分钟
     getTaskTime: 900, //15分钟
     getHbTime: 300, //5分钟
     checkAgencyTime:3600 //一个小时
@@ -207,6 +207,7 @@ function FindHB() {
         back()
         sleep(4000)
         back()
+        sleep(3000)
         //有些时候返回没有到位，在查找任务那里
         let rwButton2 = className("android.view.View").desc("任务").findOnce()
         if (rwButton2) {
@@ -288,10 +289,11 @@ function GetTask() {
         element.parent().click()
         sleep(300)
     })
-    sleep(1000)
+    sleep(3000)
     back()
-    sleep(1000)
+    sleep(3000)
     back()
+    sleep(3000)
     //有些时候返回没有到位，在查找任务那里
     let rwButton2 = className("android.view.View").desc("任务").findOnce()
     if (rwButton2) {
@@ -333,7 +335,7 @@ function GetTask() {
 function sendBulletScreen() {
     log("发送弹幕函数",appStatus)
     if (appStatus != "inRoom") {
-        setTimeout(sendBulletScreen, Math.floor(Math.random() * 1000 * config.bulletTime))
+        setTimeout(sendBulletScreen, Math.floor((Math.random() * config.bulletTime+1200 )* 1000))
         return
     }
     if (setText(0, getRandomBulletScreen())) {
@@ -346,7 +348,7 @@ function sendBulletScreen() {
         // }
     }
     //30分钟内随机
-    setTimeout(sendBulletScreen, Math.floor(Math.random() * 1000 * config.bulletTime))
+    setTimeout(sendBulletScreen, Math.floor((Math.random() * config.bulletTime+1200 )* 1000))
 }
 
 //退出APP

@@ -3,7 +3,7 @@ let config = {
     bulletTime: 1800, //30分钟
     getTaskTime: 900, //15分钟
     getHbTime: 300, //5分钟
-    checkAgencyTime:3600 //一个小时
+    checkAgencyTime:18000 //五个小时
     // bulletTime: 10,  
     // getTaskTime: 120,  
     // getHbTime:60,
@@ -134,9 +134,9 @@ function ChoosePerson(name) {
             OpenToRoom(name)
             break
         }
-        log("主播", name, depth(25).desc(name).findOnce())
-        if (depth(25).desc(name).findOnce()) {
-            depth(25).desc(name).findOnce() && depth(25).desc(name).findOnce().parent() && depth(25).desc(name).findOnce().parent().click()
+        log("主播", name, desc(name).findOnce())
+        if (desc(name).findOnce()) {
+            desc(name).findOnce() && desc(name).findOnce().parent() && desc(name).findOnce().parent().click()
             appStatus = "inRoom"
             sleep(2000)
             break;
@@ -333,7 +333,7 @@ function GetTask() {
 function sendBulletScreen() {
     log("发送弹幕函数",appStatus)
     if (appStatus != "inRoom") {
-        setTimeout(sendBulletScreen, Math.floor(Math.random() * 1000 * config.bulletTime))
+        setTimeout(sendBulletScreen, Math.floor((Math.random() * config.bulletTime+2400 )* 1000))
         return
     }
     if (setText(0, getRandomBulletScreen())) {
@@ -345,8 +345,7 @@ function sendBulletScreen() {
         //     click('发送')
         // }
     }
-    //30分钟内随机
-    setTimeout(sendBulletScreen, Math.floor(Math.random() * 1000 * config.bulletTime))
+    setTimeout(sendBulletScreen, Math.floor((Math.random() * config.bulletTime+2400 )* 1000))
 }
 
 //退出APP
@@ -367,38 +366,67 @@ function ExitApp() {
 }
 
 //检测代理是否启动
-function checkAgency() {
-    if (appStatus != "inRoom") return
+function checkAgency(name) {
+    let time=0;
+    if (appStatus == "getTask" || appStatus == "getHB") return
+    let oldStatus=appStatus;
     //启动IP精灵，
     if (launch("com.chuangdian.ipjl2")) appStatus = "back"
+    if(textContains("正在尝试开启").findOne(3000)){
+        text("允许").click()
+    }
     //被挤下线了，重登
     let bt = id("m5").findOne(5000)
     if (bt) {
         bt.click()
     }
     //一键断开当前连接
-    let bt1 = id("dc").findOne(15000)
+    let bt1 = id("com.chuangdian.ipjl2:id/dc").findOne(15000)
     if (bt1) {
-        log("代理运行正常")
-        launchApp("企鹅电竞")
-        appStatus = "inRoom"
+        if(oldStatus == "inRoom" && time==0){
+            log("代理运行正常")
+            launchApp("企鹅电竞")
+            if(textContains("正在尝试开启").findOne(3000)){
+                text("允许").click()
+            }
+        }else{
+            log("代理重连后运行正常")
+            OpenToRoom(name)
+        }
+        appStatus = oldStatus
         return
     };
     //一键连接按钮
-    let bt2 = id("di").findOne(30000)
+    let bt2 = id("com.chuangdian.ipjl2:id/di").findOne(30000)
     if (bt2) {
         //选择连接线路按钮
-        let bt3 = id("dh").findOne(3000)
+        let bt3 = id("com.chuangdian.ipjl2:id/dh").findOne(3000)
         if (bt3) {
             bt3.click()
-            id("r4").className("android.widget.TextView").text("静态线路").findOne().parent().parent().click()
-            sleep(5000)
-            text('随机线路').findOnce().parent().click()
+            if (temp = id("com.chuangdian.ipjl2:id/r4").className("android.widget.TextView").text("静态线路").findOne(5000)) {
+                temp.parent().click()
+                sleep(7000)
+                setText("电信")
+                sleep(2000)
+                id('com.chuangdian.ipjl2:id/sw').click()
+                sleep(5000)
+                text('随机线路').findOnce().parent().click()
+                //重连代理之后，重启QQ和企鹅电竞
+                var result = shell("am force-stop com.tencent.mobileqq", true);
+                var result1 = shell("am force-stop com.tencent.qgame", true);
+                if(result.code == 0){
+                    log("QQ启动状态:",launch("com.tencent.mobileqq"));
+                    if(textContains("正在尝试开启").findOne(3000)){
+                        text("允许").click()
+                    }
+                    sleep(10000)
+                }
+                time+=1
+            }
         } else {
             bt2.click()
         }
-        appStatus = "inRoom"
-        checkAgency()
+        checkAgency(name)
     }
 
 }
@@ -426,6 +454,7 @@ return function (arr) {
                 log("线程进入")
                 setTimeout(() => {
                     log("定时器进入")
+                    checkAgency(v.name)
                     OpenToRoom(v.name)
                     FindHB()
 
@@ -444,7 +473,7 @@ return function (arr) {
                     }, config.getTaskTime * 1000)
                     //检测代理是否掉线
                     setInterval(() => {
-                        checkAgency()
+                        checkAgency(v.name)
                     }, config.checkAgencyTime * 1000)
                     sendBulletScreen()
                 }, v.start > tdSecond ? (v.start - tdSecond) * 1000 : 0)

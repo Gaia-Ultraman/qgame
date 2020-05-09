@@ -369,6 +369,7 @@ function ExitApp() {
 
 //检测代理是否启动
 function checkAgency(name) {
+    log("进入代理检测")
     let time=0;
     if (appStatus == "getTask" || appStatus == "getHB") return
     let oldStatus=appStatus;

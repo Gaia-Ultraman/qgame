@@ -138,7 +138,7 @@ function ChoosePerson(name) {
         if (desc(name).findOnce()) {
             desc(name).findOnce() && desc(name).findOnce().parent() && desc(name).findOnce().parent().click()
             appStatus = "inRoom"
-            sleep(2000)
+            sleep(5000)
             break;
         } else {
             toast("没有找到：" + name)

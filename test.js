@@ -550,11 +550,12 @@ log(getPackageName("QQ"))
 
 //检测代理是否启动
 function checkAgency(name) {
+    log("进入代理检测")
     let time=0;
     if (appStatus == "getTask" || appStatus == "getHB") return
     let oldStatus=appStatus;
     //启动IP精灵，
-    if (launch("com.chuangdian.ipjl2")) appStatus = "back"
+    if (launch("com.chuangdian.ipjl2")) appStatus = "back";
     if(textContains("正在尝试开启").findOne(3000)){
         text("允许").click()
     }
@@ -618,7 +619,7 @@ function checkAgency(name) {
     }
 
 }
-appStatus = "inRoom"
+
 // FindHB()
 checkAgency('老实敦厚的笑笑')
 // OpenToRoom('老实敦厚的笑笑')

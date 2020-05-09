@@ -374,10 +374,13 @@ function checkAgency(name) {
     if (appStatus == "getTask" || appStatus == "getHB") return
     let oldStatus=appStatus;
     //启动IP精灵，
-    if (launch("com.chuangdian.ipjl2")) appStatus = "back"
+    launch("com.chuangdian.ipjl2");
+    appStatus = "back";
+    log(0)
     if(textContains("正在尝试开启").findOne(3000)){
         text("允许").click()
     }
+    log("???")
     //被挤下线了，重登
     let bt = id("com.chuangdian.ipjl2:id/m5").findOne(5000)
     if (bt) {

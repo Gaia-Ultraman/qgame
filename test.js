@@ -563,17 +563,17 @@ function checkAgency(name) {
     if (bt) {
         bt.click()
     }
-    log(1)
     //一键断开当前连接
     let bt1 = id("com.chuangdian.ipjl2:id/dc").findOne(15000)
     if (bt1) {
-        log("代理运行正常")
         if(oldStatus == "inRoom" && time==0){
+            log("代理运行正常")
             launchApp("企鹅电竞")
             if(textContains("正在尝试开启").findOne(3000)){
                 text("允许").click()
             }
         }else{
+            log("代理重连后运行正常")
             OpenToRoom(name)
         }
         appStatus = oldStatus
@@ -586,8 +586,9 @@ function checkAgency(name) {
         let bt3 = id("com.chuangdian.ipjl2:id/dh").findOne(3000)
         if (bt3) {
             bt3.click()
-            if (temp = id("com.chuangdian.ipjl2:id/r4").className("android.widget.TextView").text("静态线路").findOne(5000)) {
-                temp.parent().click()
+            if (id("com.chuangdian.ipjl2:id/r4").className("android.widget.TextView").text("静态线路").findOne(5000)) {
+                //temp.parent().click()
+                Tap(388,312)
                 sleep(7000)
                 setText("电信")
                 sleep(2000)

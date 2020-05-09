@@ -377,7 +377,8 @@ function checkAgency(name) {
     launch("com.chuangdian.ipjl2");
     appStatus = "back";
     log(0)
-    if(textContains("正在尝试开启").findOne(3000)){
+    sleep(3000)
+    if(textContains("正在尝试开启").findOnce()){
         text("允许").click()
     }
     log("???")

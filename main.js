@@ -1,6 +1,6 @@
 //时间配置
 let config = {
-    bulletTime: 1800, //30分钟
+    bulletTime: 3600, //60分钟
     getTaskTime: 900, //15分钟
     getHbTime: 300, //5分钟
     checkAgencyTime:18000 //五个小时
@@ -207,6 +207,7 @@ function FindHB() {
         back()
         sleep(4000)
         back()
+        sleep(3000)
         //有些时候返回没有到位，在查找任务那里
         let rwButton2 = className("android.view.View").desc("任务").findOnce()
         if (rwButton2) {
@@ -288,10 +289,11 @@ function GetTask() {
         element.parent().click()
         sleep(300)
     })
-    sleep(1000)
+    sleep(3000)
     back()
-    sleep(1000)
+    sleep(3000)
     back()
+    sleep(3000)
     //有些时候返回没有到位，在查找任务那里
     let rwButton2 = className("android.view.View").desc("任务").findOnce()
     if (rwButton2) {

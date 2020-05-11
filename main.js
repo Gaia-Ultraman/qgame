@@ -393,12 +393,12 @@ function checkAgency(name) {
     log(2)
     if (bt1) {
         log("@@成功")
+        log("QQ启动状态:", launch("com.tencent.mobileqq"));
+        if (textContains("正在尝试开启").findOne(3000)) {
+            text("允许").click()
+        }
+        sleep(8000)
         if (oldStatus == "inRoom" && time == 0) {
-            log("QQ启动状态:", launch("com.tencent.mobileqq"));
-            if (textContains("正在尝试开启").findOne(3000)) {
-                text("允许").click()
-            }
-            sleep(8000)
             log("代理运行正常")
             launchApp("企鹅电竞")
             if (textContains("正在尝试开启").findOne(3000)) {

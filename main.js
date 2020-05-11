@@ -3,7 +3,7 @@ let config = {
     bulletTime: 3600, //60分钟
     getTaskTime: 900, //15分钟
     getHbTime: 300, //5分钟
-    checkAgencyTime:18000 //五个小时
+    checkAgencyTime: 18000 //五个小时
     // bulletTime: 10,  
     // getTaskTime: 120,  
     // getHbTime:60,
@@ -235,7 +235,7 @@ function RefreshSP() {
             }
         }
     }
-    
+
 }
 
 
@@ -333,9 +333,9 @@ function GetTask() {
 
 //发送弹幕
 function sendBulletScreen() {
-    log("发送弹幕函数",appStatus)
+    log("发送弹幕函数", appStatus)
     if (appStatus != "inRoom") {
-        setTimeout(sendBulletScreen, Math.floor((Math.random() * config.bulletTime+2400 )* 1000))
+        setTimeout(sendBulletScreen, Math.floor((Math.random() * config.bulletTime + 2400) * 1000))
         return
     }
     if (setText(0, getRandomBulletScreen())) {
@@ -347,7 +347,7 @@ function sendBulletScreen() {
         //     click('发送')
         // }
     }
-    setTimeout(sendBulletScreen, Math.floor((Math.random() * config.bulletTime+2400 )* 1000))
+    setTimeout(sendBulletScreen, Math.floor((Math.random() * config.bulletTime + 2400) * 1000))
 }
 
 //退出APP
@@ -370,15 +370,15 @@ function ExitApp() {
 //检测代理是否启动
 function checkAgency(name) {
     log("进入代理检测")
-    let time=0;
+    let time = 0;
     if (appStatus == "getTask" || appStatus == "getHB") return
-    let oldStatus=appStatus;
+    let oldStatus = appStatus;
     //启动IP精灵，
     launch("com.chuangdian.ipjl2");
     appStatus = "back";
     log(0)
     sleep(3000)
-    if(textContains("正在尝试开启").findOnce()){
+    if (textContains("正在尝试开启").findOnce()) {
         text("允许").click()
     }
     log("???")
@@ -393,13 +393,18 @@ function checkAgency(name) {
     log(2)
     if (bt1) {
         log("@@成功")
-        if(oldStatus == "inRoom" && time==0){
-            log("代理运行正常")
-            launchApp("企鹅电竞")
-            if(textContains("正在尝试开启").findOne(3000)){
+        if (oldStatus == "inRoom" && time == 0) {
+            log("QQ启动状态:", launch("com.tencent.mobileqq"));
+            if (textContains("正在尝试开启").findOne(3000)) {
                 text("允许").click()
             }
-        }else{
+            sleep(8000)
+            log("代理运行正常")
+            launchApp("企鹅电竞")
+            if (textContains("正在尝试开启").findOne(3000)) {
+                text("允许").click()
+            }
+        } else {
             log("代理重连后运行正常")
             OpenToRoom(name)
         }
@@ -408,35 +413,29 @@ function checkAgency(name) {
     };
     //一键连接按钮
     let bt2 = id("com.chuangdian.ipjl2:id/di").findOne(30000)
-    log(3,bt2)
+    log(3, bt2)
     if (bt2) {
-        //选择连接线路按钮
-        let bt3 = id("com.chuangdian.ipjl2:id/dh").findOne(3000)
-        if (bt3) {
-            bt3.click()
-            if (temp = id("com.chuangdian.ipjl2:id/r4").className("android.widget.TextView").text("静态线路").findOne(5000)) {
-                // temp.parent().click()
-                Tap(388,312)
-                sleep(7000)
-                setText("电信")
-                sleep(2000)
-                id('com.chuangdian.ipjl2:id/sw').click()
-                sleep(5000)
-                text('随机线路').findOnce().parent().click()
-                //重连代理之后，重启QQ和企鹅电竞
-                var result = shell("am force-stop com.tencent.mobileqq", true);
-                var result1 = shell("am force-stop com.tencent.qgame", true);
-                if(result.code == 0){
-                    log("QQ启动状态:",launch("com.tencent.mobileqq"));
-                    if(textContains("正在尝试开启").findOne(3000)){
-                        text("允许").click()
-                    }
-                    sleep(10000)
+        bt2.click()
+        if (!id("com.chuangdian.ipjl2:id/dc").findOne(30000)) {
+            //选择连接线路按钮
+            let bt3 = id("com.chuangdian.ipjl2:id/dh").findOne(3000)
+            if (bt3) {
+                bt3.click()
+                if (temp = id("com.chuangdian.ipjl2:id/r4").className("android.widget.TextView").text("静态线路").findOne(5000)) {
+                    // temp.parent().click()
+                    Tap(388, 312)
+                    sleep(7000)
+                    setText("电信")
+                    sleep(2000)
+                    id('com.chuangdian.ipjl2:id/sw').click()
+                    sleep(5000)
+                    text('随机线路').findOnce().parent().click()
+                    //重连代理之后，重启QQ和企鹅电竞
+                    var result = shell("am force-stop com.tencent.mobileqq", true);
+                    var result1 = shell("am force-stop com.tencent.qgame", true);
+                    time += 1
                 }
-                time+=1
             }
-        } else {
-            bt2.click()
         }
         checkAgency(name)
     }

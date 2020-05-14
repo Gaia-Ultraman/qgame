@@ -334,19 +334,21 @@ function GetTask() {
 function sendBulletScreen() {
     log("发送弹幕函数", appStatus)
     if (appStatus != "inRoom") {
-        setTimeout(sendBulletScreen, Math.floor((Math.random() * config.bulletTime + 2400) * 1000))
+        setTimeout(send, Math.floor((Math.random() * config.bulletTime + 2400) * 1000))
         return
     }
-    if (setText(0, getRandomBulletScreen())) {
-        sleep(2000)
-        Tap(960, 1820)
-        // if (id("send").findOnce()) {
-        //     id("send").findOnce().click()
-        // } else {
-        //     click('发送')
-        // }
+    setTimeout(send, Math.floor((Math.random() * config.bulletTime + 2400) * 1000))
+    function send(){
+        if (setText(0, getRandomBulletScreen())) {
+            sleep(2000)
+            Tap(960, 1820)
+            // if (id("send").findOnce()) {
+            //     id("send").findOnce().click()
+            // } else {
+            //     click('发送')
+            // }
+        }
     }
-    setTimeout(sendBulletScreen, Math.floor((Math.random() * config.bulletTime + 2400) * 1000))
 }
 
 //退出APP

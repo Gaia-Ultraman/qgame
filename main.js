@@ -145,15 +145,14 @@ function ChoosePerson(name) {
             Swipe(985, 396, 1000, 1300, 1500)
             times += 1
             sleep(5000)
+            //有可能是auto.js卡了，也有可能主播没上线。重启一下APP
+            if (times > 5) {
+                times = 0
+                ExitApp()
+                sleep(2000)
+                OpenToRoom(name)
+            }
         }
-        //有可能是auto.js卡了，也有可能主播没上线。重启一下APP
-        if (times > 5) {
-            times = 0
-            ExitApp()
-            sleep(2000)
-            OpenToRoom(name)
-        }
-
     }
 }
 

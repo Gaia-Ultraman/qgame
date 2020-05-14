@@ -83,6 +83,7 @@ function getRandomBulletScreen() {
 //************************** 功能点 ************************************
 //打开APP到关注
 function OpenToRoom(name) {
+    if(appStatus=="inRoom")return
     launchApp("企鹅电竞")
     appStatus = "open"
     //关闭广告

@@ -334,10 +334,10 @@ function GetTask() {
 function sendBulletScreen() {
     log("发送弹幕函数", appStatus)
     if (appStatus != "inRoom") {
-        setTimeout(send, Math.floor((Math.random() * config.bulletTime + 2400) * 1000))
+        setTimeout(send, Math.floor((Math.random() * config.bulletTime + 2400) )* 1000)
         return
     }
-    setTimeout(send, Math.floor((Math.random() * config.bulletTime + 2400) * 1000))
+    setTimeout(send, Math.floor((Math.random() * config.bulletTime + 2400))* 1000)
     function send(){
         if (setText(0, getRandomBulletScreen())) {
             sleep(2000)
@@ -467,7 +467,8 @@ return function (arr) {
                 setTimeout(() => {
                     log("定时器进入")
                     checkAgency(v.name)
-                    OpenToRoom(v.name)
+                    //检测代理里面已经有打开APP了
+                    // OpenToRoom(v.name)
                     FindHB()
 
                     setInterval(() => {

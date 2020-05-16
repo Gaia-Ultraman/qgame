@@ -464,7 +464,7 @@ return function (arr) {
     if(arr[2].end * 3600 < tdSecond){
         cloneArr=arr.map(v=>{
             return {
-                ...v,
+                name=v.name,
                 start=v.start+24*3600,
                 end=v.end+24*3600
             }

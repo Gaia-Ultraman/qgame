@@ -461,7 +461,8 @@ return function (arr) {
     }
     //有可能直播在今晚上12点前结束，重新进入计算时，当时时间已经超过了最后一位主播的下拨时间，计算第二天的时间
     // let cloneArr=JSON.parse(JSON.stringify(arr)) 闪退 脚本引擎的BUG?？
-    let cloneArr = arr.map(v => {
+    let cloneArr=[]
+    cloneArr = arr.map(v => {
         return {
             name=v.name,
             start=v.start,

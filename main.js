@@ -461,23 +461,14 @@ return function (arr) {
     }
     //有可能直播在今晚上12点前结束，重新进入计算时，当时时间已经超过了最后一位主播的下拨时间，计算第二天的时间
     // let cloneArr=JSON.parse(JSON.stringify(arr)) 闪退 脚本引擎的BUG?？
-    let cloneArr=[]
-    cloneArr = arr.map(v => {
-        return {
+    let cloneArr = []
+    cloneArr = arr.forEach(v => {
+        cloneArr.push({
             name=v.name,
-            start=v.start,
-            end=v.end
-        }
-    })
-    if (arr[2].end * 3600 < tdSecond) {
-        cloneArr = arr.map(v => {
-            return {
-                name=v.name,
-                start=v.start + 24 * 3600,
-                end=v.end + 24 * 3600
-            }
+            start=arr[2].end * 3600 < tdSecond ? (v.start + 24 * 3600) : v.start,
+            end=arr[2].end * 3600 < tdSecond ? (v.end + 24 * 3600) : v.end
         })
-    }
+    })
 
     //把传入的小时时间全部转换为秒数
     cloneArr.forEach((v, i) => {

@@ -405,6 +405,7 @@ function checkAgency(name) {
             if (textContains("正在尝试开启").findOne(3000)) {
                 text("允许").click()
             }
+            appStatus = oldStatus
         } else {
             log("代理重连后运行正常")
             log("QQ启动状态:", launch("com.tencent.mobileqq"));
@@ -414,7 +415,6 @@ function checkAgency(name) {
             sleep(8000)
             OpenToRoom(name)
         }
-        appStatus = oldStatus
         return
     };
     //一键连接按钮

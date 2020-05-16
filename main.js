@@ -83,7 +83,7 @@ function getRandomBulletScreen() {
 //************************** 功能点 ************************************
 //打开APP到关注
 function OpenToRoom(name) {
-    if(appStatus=="inRoom")return
+    if (appStatus == "inRoom" || appStatus == "getHB" || appStatus == "getTask") return
     launchApp("企鹅电竞")
     appStatus = "open"
     //关闭广告
@@ -335,20 +335,23 @@ function GetTask() {
 function sendBulletScreen() {
     log("发送弹幕函数", appStatus)
     if (appStatus != "inRoom") {
-        setTimeout(send, Math.floor((Math.random() * config.bulletTime + 2400) )* 1000)
+        setTimeout(send, Math.floor((Math.random() * config.bulletTime + 2400)) * 1000)
         return
     }
-    setTimeout(send, Math.floor((Math.random() * config.bulletTime + 2400))* 1000)
-    function send(){
-        if (setText(0, getRandomBulletScreen())) {
-            sleep(2000)
-            Tap(960, 1820)
-            // if (id("send").findOnce()) {
-            //     id("send").findOnce().click()
-            // } else {
-            //     click('发送')
-            // }
+    setTimeout(send, Math.floor((Math.random() * config.bulletTime + 2400)) * 1000)
+    function send() {
+        if (appStatus == "inRoom") {
+            if (setText(0, getRandomBulletScreen())) {
+                sleep(2000)
+                Tap(960, 1820)
+                // if (id("send").findOnce()) {
+                //     id("send").findOnce().click()
+                // } else {
+                //     click('发送')
+                // }
+            }
         }
+
     }
 }
 
@@ -367,6 +370,7 @@ function ExitApp() {
         back()
         sleep(300)
     }
+    appStatus = "close"
 }
 
 //检测代理是否启动

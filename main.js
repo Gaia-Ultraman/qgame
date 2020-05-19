@@ -136,8 +136,7 @@ function ChoosePerson(name) {
             break
         }
         log("主播", name, desc(name).findOnce())
-        if (desc(name).findOnce()) {
-            desc(name).findOnce() && desc(name).findOnce().parent() && desc(name).findOnce().parent().click()
+        if (desc(name).findOnce() && desc(name).findOnce().parent() && desc(name).findOnce().parent().click()) {
             appStatus = "inRoom"
             sleep(5000)
             break;

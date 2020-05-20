@@ -208,10 +208,10 @@ function FindHB() {
         back()
         sleep(3000)
         //有些时候返回没有到位，在查找任务那里
-        let rwButton2 = className("android.view.View").desc("任务").findOnce()
-        if (rwButton2) {
-            back()
-        }
+        // let rwButton2 = className("android.view.View").desc("任务").findOnce()
+        // if (rwButton2) {
+        //     back()
+        // }
     }
     appStatus = "inRoom"
 }
@@ -240,7 +240,7 @@ function RefreshSP() {
 
 //房间内弹出的奇怪窗口
 function closeWindow() {
-    if (appStatus != "inRoom") return
+    if (appStatus != "inRoom" || appStatus != "getHB" || appStatus != 'getTask') return
     //升级的弹窗
     id("com.tencent.qgame:id/iv_close").findOnce() && id("com.tencent.qgame:id/iv_close").findOnce().click()
     //防止主播提前下播被跳走
@@ -294,10 +294,10 @@ function GetTask() {
     back()
     sleep(3000)
     //有些时候返回没有到位，在查找任务那里
-    let rwButton2 = className("android.view.View").desc("任务").findOnce()
-    if (rwButton2) {
-        back()
-    }
+    // let rwButton2 = className("android.view.View").desc("任务").findOnce()
+    // if (rwButton2) {
+    //     back()
+    // }
 
     //领取完成之后设置状态
     appStatus = "inRoom"
@@ -507,6 +507,7 @@ return function (arr) {
                 setTimeout(() => {
                     ExitApp()
                     hasDone = i == 2
+                    sleep(3000)
                     v.thread.forEach(v => v.interrupt());
                 }, (v.end - tdSecond) * 1000)
             })

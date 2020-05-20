@@ -1,6 +1,6 @@
 //时间配置
 let config = {
-    bulletTime: 3600, //60分钟
+    bulletTime: 4800, //80分钟
     getTaskTime: 900, //15分钟
     getHbTime: 300, //5分钟
     checkAgencyTime: 18000 //五个小时
@@ -391,6 +391,11 @@ function checkAgency(name) {
     let bt = id("com.chuangdian.ipjl2:id/m5").findOne(5000)
     if (bt) {
         bt.click()
+    }
+    //强制登录
+    let _bt = text('强制登录').findOne(5000)
+    if(_bt){
+        _bt.click()
     }
     log(1)
     //一键断开当前连接

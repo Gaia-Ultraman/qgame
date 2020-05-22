@@ -219,11 +219,9 @@ function FindHB() {
 
 //刷新一次视频,如果网络不好会返回关注那里重新进
 function RefreshSP() {
-    log("RefreshSP")
     //inRoom在房间  getTask在房间领取任务  getHB在房间领取红包
     if (appStatus == "inRoom" || appStatus == "getTask" || appStatus == "getHB") {
         if (textContains("网络未连接").findOnce() || textContains("接收不到主播信号了").findOnce()) {
-            log("RefreshSP...")
             if (id("com.tencent.qgame:id/video_layout").exists()) {
                 Tap(740, 140)
                 sleep(1000)
@@ -381,12 +379,12 @@ function checkAgency(name) {
     //启动IP精灵，
     launch("com.chuangdian.ipjl2");
     appStatus = "back";
-    log(0)
+    
     sleep(3000)
     if (textContains("正在尝试开启").findOnce()) {
         text("允许").click()
     }
-    log("???")
+    
     //被挤下线了，重登
     let bt = id("com.chuangdian.ipjl2:id/m5").findOne(5000)
     if (bt) {
@@ -397,10 +395,15 @@ function checkAgency(name) {
     if(_bt){
         _bt.click()
     }
-    log(1)
+    //重新登录
+    let _bt1 = text('重新登录').findOne(5000)
+    if(_bt1){
+        _bt1.click()
+        sleep(2000)
+        text('登录').findOne(5000).click()
+    }
     //一键断开当前连接
     let bt1 = id("com.chuangdian.ipjl2:id/dc").findOne(15000)
-    log(2)
     if (bt1) {
         log("@@成功")
         if (oldStatus == "inRoom" && time == 0) {

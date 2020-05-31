@@ -453,7 +453,7 @@ function checkAgency(name, firstTime) {
                     let bt3 = id("com.chuangdian.ipjl2:id/dh").findOne(3000)
                     if (bt3) {
                         bt3.click()
-                        if (temp = id("com.chuangdian.ipjl2:id/r4").className("android.widget.TextView").text("静态线路").findOne(5000)) {
+                        
                             // temp.parent().click()
                             Tap(388, 312)
                             sleep(7000)
@@ -465,7 +465,7 @@ function checkAgency(name, firstTime) {
                             //重连代理之后，重启QQ和企鹅电竞
                             var result = shell("am force-stop com.tencent.mobileqq", true);
                             var result1 = shell("am force-stop com.tencent.qgame", true);
-                        }
+                        
                     }
                 }
             }

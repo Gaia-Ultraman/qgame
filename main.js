@@ -371,49 +371,16 @@ function ExitApp() {
 }
 
 //检测代理是否启动
-function checkAgency(name) {
-    log("进入代理检测")
-    let time = 0;
+function checkAgency(name, firstTime) {
+    log("进入代理检测", name, firstTime)
+    let time = 1;
     if (appStatus == "getTask" || appStatus == "getHB") return
     let oldStatus = appStatus;
-    //启动IP精灵，
-    launch("com.chuangdian.ipjl2");
-    appStatus = "back";
-    
-    sleep(3000)
-    if (textContains("正在尝试开启").findOnce()) {
-        text("允许").click()
-    }
-    
-    //被挤下线了，重登
-    let bt = id("com.chuangdian.ipjl2:id/m5").findOne(5000)
-    if (bt) {
-        bt.click()
-    }
-    //强制登录
-    let _bt = text('强制登录').findOne(5000)
-    if(_bt){
-        _bt.click()
-    }
-    //重新登录
-    let _bt1 = text('重新登录').findOne(5000)
-    if(_bt1){
-        _bt1.click()
-        sleep(2000)
-        text('登录').findOne(5000).click()
-    }
-    //一键断开当前连接
-    let bt1 = id("com.chuangdian.ipjl2:id/dc").findOne(15000)
-    if (bt1) {
-        log("@@成功")
-        if (oldStatus == "inRoom" && time == 0) {
-            log("代理运行正常")
-            launchApp("企鹅电竞")
-            if (textContains("正在尝试开启").findOne(3000)) {
-                text("允许").click()
-            }
-            appStatus = oldStatus
-        } else {
+    open()
+    //无限回调 到连接成功
+    if (connect()) {
+        //如果是第一次打开代理
+        if (firstTime || time>1) {
             log("代理重连后运行正常")
             log("QQ启动状态:", launch("com.tencent.mobileqq"));
             if (textContains("正在尝试开启").findOne(3000)) {
@@ -421,36 +388,89 @@ function checkAgency(name) {
             }
             sleep(8000)
             OpenToRoom(name)
+        }else{
+            log("代理运行正常")
+            launchApp("企鹅电竞")
+            if (textContains("正在尝试开启").findOne(3000)) {
+                text("允许").click()
+            }
+            appStatus = oldStatus
         }
-        return
-    };
-    //一键连接按钮
-    let bt2 = id("com.chuangdian.ipjl2:id/di").findOne(30000)
-    log(3, bt2)
-    if (bt2) {
-        bt2.click()
-        if (!id("com.chuangdian.ipjl2:id/dc").findOne(30000)) {
-            //选择连接线路按钮
-            let bt3 = id("com.chuangdian.ipjl2:id/dh").findOne(3000)
-            if (bt3) {
-                bt3.click()
-                if (temp = id("com.chuangdian.ipjl2:id/r4").className("android.widget.TextView").text("静态线路").findOne(5000)) {
-                    // temp.parent().click()
-                    Tap(388, 312)
-                    sleep(7000)
-                    setText("电信")
-                    sleep(2000)
-                    id('com.chuangdian.ipjl2:id/sw').click()
-                    sleep(5000)
-                    text('随机线路').findOnce().parent().click()
-                    //重连代理之后，重启QQ和企鹅电竞
-                    var result = shell("am force-stop com.tencent.mobileqq", true);
-                    var result1 = shell("am force-stop com.tencent.qgame", true);
-                    time += 1
+
+    }
+
+    function open() {
+        //启动IP精灵，
+        launch("com.chuangdian.ipjl2");
+        appStatus = "back";
+
+        sleep(3000)
+        if (textContains("正在尝试开启").findOnce()) {
+            text("允许").click()
+        }
+
+        //被挤下线了，重登
+        let bt = id("com.chuangdian.ipjl2:id/m5").findOne(5000)
+        if (bt) {
+            bt.click()
+        }
+        //强制登录
+        let _bt = text('强制登录').findOne(5000)
+        if (_bt) {
+            _bt.click()
+        }
+        //重新登录
+        let _bt1 = text('重新登录').findOne(5000)
+        if (_bt1) {
+            _bt1.click()
+            sleep(2000)
+            text('登录').findOne(5000).click()
+        }
+    }
+
+    function connect() {
+        let bt1 = id("com.chuangdian.ipjl2:id/dc").findOne(15000)
+        if (bt1) {
+            return true
+        } else {
+            time++
+            //一键连接按钮
+            let bt2 = id("com.chuangdian.ipjl2:id/di").findOne(30000)
+            if (bt2) {
+                bt2.click()
+                if (!id("com.chuangdian.ipjl2:id/dc").findOne(30000)) {
+                    //取消连接
+                    let cancelConnet = id("com.chuangdian.ipjl2:id/m7").findOne(5000)
+                    if (cancelConnet) cancelConnet.click()
+                    //取消
+                    let cancel = text('取消').findOne(3000)
+                    if (cancel) cancel.click()
+                    //连接失败后的确定
+                    let confirm = text('确定').findOne(3000)
+                    if (confirm) confirm.click()
+
+                    //选择连接线路按钮
+                    let bt3 = id("com.chuangdian.ipjl2:id/dh").findOne(3000)
+                    if (bt3) {
+                        bt3.click()
+                        if (temp = id("com.chuangdian.ipjl2:id/r4").className("android.widget.TextView").text("静态线路").findOne(5000)) {
+                            // temp.parent().click()
+                            Tap(388, 312)
+                            sleep(7000)
+                            setText("电信")
+                            sleep(2000)
+                            id('com.chuangdian.ipjl2:id/sw').click()
+                            sleep(5000)
+                            text('随机线路').findOnce().parent().click()
+                            //重连代理之后，重启QQ和企鹅电竞
+                            var result = shell("am force-stop com.tencent.mobileqq", true);
+                            var result1 = shell("am force-stop com.tencent.qgame", true);
+                        }
+                    }
                 }
             }
         }
-        checkAgency(name)
+        return connect()
     }
 
 }
@@ -466,8 +486,8 @@ return function (arr) {
         tdSecond += 24 * 3600
     }
     //有可能直播在今晚上12点前结束，重新进入计算时，当时时间已经超过了最后一位主播的下拨时间，计算第二天的时间
-    let cloneArr=JSON.parse(JSON.stringify(arr)) //闪退 脚本引擎的BUG?？
-    if(arr[2].end * 3600 < tdSecond){cloneArr.forEach(v=>{v.start+=24;v.end+=24})}
+    let cloneArr = JSON.parse(JSON.stringify(arr)) //闪退 脚本引擎的BUG?？
+    if (arr[2].end * 3600 < tdSecond) { cloneArr.forEach(v => { v.start += 24; v.end += 24 }) }
     //把传入的小时时间全部转换为秒数
     cloneArr.forEach((v, i) => {
         v.start = v.start * 3600;

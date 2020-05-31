@@ -461,7 +461,8 @@ function checkAgency(name, firstTime) {
                             sleep(2000)
                             id('com.chuangdian.ipjl2:id/sw').click()
                             sleep(5000)
-                            text('随机线路').findOnce().parent().click()
+                            // text('随机线路').findOnce().parent().click()
+                            Tap(146, 742)
                             //重连代理之后，重启QQ和企鹅电竞
                             var result = shell("am force-stop com.tencent.mobileqq", true);
                             var result1 = shell("am force-stop com.tencent.qgame", true);

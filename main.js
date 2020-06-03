@@ -500,7 +500,7 @@ return function (arr) {
                 log("线程进入")
                 setTimeout(() => {
                     log("定时器进入")
-                    checkAgency(v.name)
+                    checkAgency(v.name,firstTime)
                     //检测代理里面已经有打开APP了
                     // OpenToRoom(v.name)
                     FindHB()

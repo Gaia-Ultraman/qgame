@@ -453,13 +453,15 @@ function checkAgency(name, firstTime) {
                     let bt3 = id("com.chuangdian.ipjl2:id/dh").findOne(3000)
                     if (bt3) {
                         bt3.click()
-
                         // temp.parent().click()
                         Tap(388, 312)
                         sleep(7000)
                         setText("电信")
                         sleep(2000)
-                        id('com.chuangdian.ipjl2:id/sw').click()
+                        let sc=id('com.chuangdian.ipjl2:id/ta').findOnce()
+                        if(sc){
+                            sc.click()
+                        }
                         sleep(5000)
                         console.log('点击随机路线')
                         // text('随机线路').findOnce().parent().click()

@@ -380,7 +380,7 @@ function checkAgency(name, firstTime) {
     //无限回调 到连接成功
     if (connect()) {
         //如果是第一次打开代理
-        if (firstTime || time>1) {
+        if (firstTime || time > 1) {
             log("代理重连后运行正常")
             log("QQ启动状态:", launch("com.tencent.mobileqq"));
             if (textContains("正在尝试开启").findOne(3000)) {
@@ -388,7 +388,7 @@ function checkAgency(name, firstTime) {
             }
             sleep(8000)
             OpenToRoom(name)
-        }else{
+        } else {
             log("代理运行正常")
             launchApp("企鹅电竞")
             if (textContains("正在尝试开启").findOne(3000)) {
@@ -453,20 +453,23 @@ function checkAgency(name, firstTime) {
                     let bt3 = id("com.chuangdian.ipjl2:id/dh").findOne(3000)
                     if (bt3) {
                         bt3.click()
-                        
-                            // temp.parent().click()
-                            Tap(388, 312)
-                            sleep(7000)
-                            setText("电信")
-                            sleep(2000)
-                            id('com.chuangdian.ipjl2:id/sw').click()
-                            sleep(5000)
-                            text('随机线路').findOnce().parent().click()
-                            // Tap(146, 742)
-                            //重连代理之后，重启QQ和企鹅电竞
-                            var result = shell("am force-stop com.tencent.mobileqq", true);
-                            var result1 = shell("am force-stop com.tencent.qgame", true);
-                        
+
+                        // temp.parent().click()
+                        Tap(388, 312)
+                        sleep(7000)
+                        setText("电信")
+                        sleep(2000)
+                        id('com.chuangdian.ipjl2:id/sw').click()
+                        sleep(5000)
+                        // text('随机线路').findOnce().parent().click()
+                        // Tap(146, 742)
+                        let wiget = text('随机线路').findOnce()
+                        console.log('坐标', wiget.bounds().centerX(), wiget.bounds().centerY())
+                        Tap(wiget.bounds().centerX(), wiget.bounds().centerY())
+                        //重连代理之后，重启QQ和企鹅电竞
+                        var result = shell("am force-stop com.tencent.mobileqq", true);
+                        var result1 = shell("am force-stop com.tencent.qgame", true);
+
                     }
                 }
             }
@@ -500,7 +503,7 @@ return function (arr) {
                 log("线程进入")
                 setTimeout(() => {
                     log("定时器进入")
-                    checkAgency(v.name,true)
+                    checkAgency(v.name, true)
                     //检测代理里面已经有打开APP了
                     // OpenToRoom(v.name)
                     FindHB()

@@ -703,7 +703,11 @@ function connect() {
     }
     return connect()
 }
-open()
-if(connect()){
-    toast('6')
-}
+// open()
+// if(connect()){
+//     toast('6')
+// }
+
+let wiget=text('随机线路').findOnce()
+console.log('坐标',wiget.bounds().centerX(),wiget.bounds().centerY())
+click(wiget.bounds().centerX(),wiget.bounds().centerY())

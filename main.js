@@ -461,11 +461,12 @@ function checkAgency(name, firstTime) {
                         sleep(2000)
                         id('com.chuangdian.ipjl2:id/sw').click()
                         sleep(5000)
+                        console.log('点击随机路线')
                         // text('随机线路').findOnce().parent().click()
-                        // Tap(146, 742)
-                        let wiget = text('随机线路').findOnce()
-                        console.log('坐标', wiget.bounds().centerX(), wiget.bounds().centerY())
-                        Tap(wiget.bounds().centerX(), wiget.bounds().centerY())
+                        Tap(146, 742)
+                        // let wiget = text('随机线路').findOnce()
+                        // console.log('坐标', wiget.bounds().centerX(), wiget.bounds().centerY())
+                        // Tap(wiget.bounds().centerX(), wiget.bounds().centerY())
                         //重连代理之后，重启QQ和企鹅电竞
                         var result = shell("am force-stop com.tencent.mobileqq", true);
                         var result1 = shell("am force-stop com.tencent.qgame", true);
